@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회고 타임라인</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --border: #e8e6e0;
+    --border-soft: #f0ede8;
+    --text-primary: #1a1916;
+    --text-secondary: #6b6860;
+    --text-tertiary: #a09e9a;
+    --decision-bg: #fef9ec; --decision-border: #f0d060; --decision-text: #7a5a00; --decision-dot: #d4a800;
+    --action-bg: #eef6ec;   --action-border: #7ec47e;   --action-text: #2a6e2a;   --action-dot: #3a9e3a;
+    --risk-bg: #fdecea;     --risk-border: #f0a0a0;     --risk-text: #8b2020;     --risk-dot: #d43030;
+    --accent: #2a2926;
+    --radius: 10px; --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── CENTERED SCREENS ── */
+  .center-screen { align-items: center; justify-content: center; padding: 2rem; }
+  .center-inner { max-width: 500px; width: 100%; text-align: center; }
+  .logo-mark { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2.5rem; }
+  .logo-mark::before { content: ''; display: block; width: 18px; height: 18px; background: var(--accent); border-radius: 4px; }
+  .screen-heading { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .screen-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 2rem; font-weight: 300; }
+
+  /* ── TEAM CARDS ── */
+  .team-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .team-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 24px 18px; cursor: pointer; text-align: left; transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; box-shadow: var(--shadow); }
+  .team-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .team-card-icon { font-size: 24px; margin-bottom: 10px; }
+  .team-card-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .team-card-count { font-size: 11px; color: var(--text-tertiary); }
+
+  /* ── MEMBER GRID ── */
+  .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; text-align: left; }
+  .member-btn { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-primary); transition: all 0.15s; box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; }
+  .member-btn:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .member-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-secondary); flex-shrink: 0; }
+  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-tertiary); cursor: pointer; margin-bottom: 1.5rem; padding: 4px 0; background: none; border: none; font-family: inherit; }
+  .back-btn:hover { color: var(--text-primary); }
+
+  /* ── ADMIN SECTION ON MEMBER SCREEN ── */
+  .admin-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 16px; }
+  .admin-divider-line { flex: 1; height: 1px; background: var(--border); }
+  .admin-divider-label { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; }
+  .present-btn { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1.5px dashed var(--border); background: transparent; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .present-btn:hover { border-color: var(--accent); color: var(--text-primary); background: var(--surface); }
+
+  /* ── NAV ── */
+  .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; flex-shrink: 0; }
+  .nav-left { display: flex; align-items: center; gap: 12px; }
+  .nav-logo { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--text-primary); cursor: pointer; }
+  .nav-logo-icon { width: 20px; height: 20px; background: var(--accent); border-radius: 4px; flex-shrink: 0; }
+  .nav-sep { width: 1px; height: 16px; background: var(--border); }
+  .nav-pill { font-size: 11px; font-weight: 500; padding: 3px 9px; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; color: var(--text-secondary); }
+  .nav-member-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; background: var(--accent); border: 1px solid var(--accent); border-radius: 999px; color: #fff; }
+  .nav-right { display: flex; align-items: center; gap: 6px; }
+  .btn { font-family: inherit; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; border: 1px solid transparent; white-space: nowrap; }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--border); }
+  .btn-ghost:hover { background: var(--bg); color: var(--text-primary); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { opacity: 0.88; }
+
+  /* ── CONTENT ── */
+  .content { flex: 1; padding: 20px; max-width: 740px; margin: 0 auto; width: 100%; }
+  .period-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .period-info { display: flex; align-items: center; gap: 10px; }
+  .period-label { font-size: 10px; color: var(--text-tertiary); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+  .period-dates { font-size: 13px; font-weight: 500; color: var(--text-primary); font-family: 'DM Mono', monospace; }
+
+  /* ── PRIVATE NOTICE ── */
+  .private-notice { background: #fef9ec; border: 1px solid #f0d060; border-radius: var(--radius-sm); padding: 9px 14px; margin-bottom: 16px; font-size: 12px; color: #7a5a00; display: flex; align-items: center; gap: 7px; }
+
+  .filter-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+  .filter-label { font-size: 11px; color: var(--text-tertiary); margin-right: 2px; }
+  .filter-btn { font-family: inherit; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 999px; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary); transition: all 0.15s; display: flex; align-items: center; gap: 4px; }
+  .filter-btn .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .filter-btn.active-all      { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .filter-btn.active-decision { background: var(--decision-bg); color: var(--decision-text); border-color: var(--decision-border); }
+  .filter-btn.active-action   { background: var(--action-bg);   color: var(--action-text);   border-color: var(--action-border); }
+  .filter-btn.active-risk     { background: var(--risk-bg);     color: var(--risk-text);     border-color: var(--risk-border); }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 86px; top: 0; bottom: 0; width: 1px; background: var(--border); z-index: 0; }
+  .tl-group { margin-bottom: 4px; }
+  .tl-date-row { display: flex; align-items: flex-start; margin-bottom: 4px; }
+  .tl-date { width: 74px; flex-shrink: 0; padding-top: 11px; font-size: 10px; font-weight: 500; color: var(--text-tertiary); font-family: 'DM Mono', monospace; text-align: right; padding-right: 13px; line-height: 1.2; }
+  .tl-date .day { font-size: 17px; font-weight: 600; color: var(--text-secondary); display: block; line-height: 1; }
+  .tl-date .month { font-size: 9px; display: block; margin-top: 2px; }
+  .tl-node { width: 26px; flex-shrink: 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 17px; position: relative; z-index: 1; }
+  .tl-node-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); border: 2px solid var(--surface); flex-shrink: 0; }
+  .tl-cards { flex: 1; display: flex; flex-direction: column; gap: 5px; padding-bottom: 14px; }
+
+  /* ── ISSUE CARD ── */
+  .issue-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: box-shadow 0.15s; }
+  .issue-card:hover { box-shadow: var(--shadow-md); }
+  .issue-card.decision { border-left: 3px solid var(--decision-dot); }
+  .issue-card.action   { border-left: 3px solid var(--action-dot); }
+  .issue-card.risk     { border-left: 3px solid var(--risk-dot); }
+  .card-main { padding: 11px 13px; cursor: pointer; display: flex; align-items: flex-start; gap: 9px; }
+  .card-type-chip { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; margin-top: 2px; letter-spacing: 0.03em; }
+  .decision .card-type-chip { background: var(--decision-bg); color: var(--decision-text); }
+  .action   .card-type-chip { background: var(--action-bg);   color: var(--action-text); }
+  .risk     .card-type-chip { background: var(--risk-bg);     color: var(--risk-text); }
+  .card-body { flex: 1; min-width: 0; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.4; }
+  .card-meta { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+  .card-author-badge { display: inline-block; font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); color: var(--text-secondary); margin-left: 4px; }
+  .card-actions { display: flex; gap: 3px; flex-shrink: 0; }
+  .icon-btn { width: 26px; height: 26px; border-radius: 5px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); transition: all 0.15s; font-size: 13px; }
+  .icon-btn:hover { background: var(--bg); color: var(--text-primary); }
+  .icon-btn.del:hover { background: #fdecea; color: var(--risk-text); }
+  .card-memo { padding: 0 13px 11px 13px; font-size: 12px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border-soft); display: none; }
+  .card-memo.open { display: block; padding-top: 9px; }
+
+  /* ── SKELETON ── */
+  .skeleton-wrap { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+  .skeleton-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: flex; gap: 10px; align-items: flex-start; }
+  .skel { background: linear-gradient(90deg, var(--border) 25%, var(--border-soft) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 4px; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ── EMPTY STATE ── */
+  .empty-state { text-align: center; padding: 50px 20px; }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-title { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-bottom: 5px; }
+  .empty-sub { font-size: 12px; color: var(--text-tertiary); margin-bottom: 18px; }
+
+  /* ── MODALS ── */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+  .overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-md); width: 100%; max-width: 440px; overflow: hidden; animation: slideUp 0.2s ease; }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-header { padding: 16px 18px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .modal-title { font-size: 15px; font-weight: 600; }
+  .modal-close { width: 28px; height: 28px; border: none; background: transparent; cursor: pointer; border-radius: 5px; font-size: 17px; color: var(--text-tertiary); display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: var(--bg); }
+  .modal-body { padding: 18px; display: flex; flex-direction: column; gap: 13px; }
+  .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 7px; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
+  .field input, .field textarea { font-family: inherit; font-size: 13px; padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text-primary); outline: none; transition: border-color 0.15s; width: 100%; }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); background: var(--surface); }
+  .field textarea { resize: vertical; min-height: 68px; }
+  .type-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+  .type-opt { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 5px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; text-align: center; }
+  .type-opt .type-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .type-opt .type-name { font-size: 10px; font-weight: 500; color: var(--text-secondary); line-height: 1.3; }
+  .type-opt.sel-decision { border-color: var(--decision-dot); background: var(--decision-bg); }
+  .type-opt.sel-decision .type-name { color: var(--decision-text); }
+  .type-opt.sel-action   { border-color: var(--action-dot); background: var(--action-bg); }
+  .type-opt.sel-action   .type-name { color: var(--action-text); }
+  .type-opt.sel-risk     { border-color: var(--risk-dot); background: var(--risk-bg); }
+  .type-opt.sel-risk     .type-name { color: var(--risk-text); }
+  .confirm-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* ── TOAST ── */
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 12px; font-weight: 500; padding: 9px 16px; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 400; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ══ PRESENTATION MODE ══ */
+  #screen-present { background: #111110; }
+  #screen-present.active { display: flex; }
+  .present-nav { background: #1a1916; border-bottom: 1px solid #2a2926; padding: 0 28px; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .present-logo { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #e8e6e0; }
+  .present-logo-icon { width: 22px; height: 22px; background: #e8e6e0; border-radius: 4px; }
+  .present-team-pill { font-size: 11px; font-weight: 500; padding: 3px 10px; background: #2a2926; border: 1px solid #3a3835; border-radius: 999px; color: #a09e9a; }
+  .present-controls { display: flex; align-items: center; gap: 8px; }
+  .present-btn-ctrl { font-family: inherit; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid #3a3835; background: transparent; color: #a09e9a; transition: all 0.15s; }
+  .present-btn-ctrl:hover { background: #2a2926; color: #e8e6e0; }
+  .present-btn-exit { background: #2a2926; color: #e8e6e0; border-color: #4a4845; }
+
+  .present-content { flex: 1; padding: 32px 40px; overflow-y: auto; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* Filter bar (dark) */
+  .present-filter { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+  .present-filter-label { font-size: 11px; color: #6b6860; margin-right: 4px; }
+  .pfbtn { font-family: inherit; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 999px; cursor: pointer; border: 1px solid #3a3835; background: transparent; color: #6b6860; transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
+  .pfbtn .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .pfbtn.pf-all      { background: #e8e6e0; color: #1a1916; border-color: #e8e6e0; }
+  .pfbtn.pf-decision { background: #fef9ec; color: #7a5a00; border-color: #f0d060; }
+  .pfbtn.pf-action   { background: #eef6ec; color: #2a6e2a; border-color: #7ec47e; }
+  .pfbtn.pf-risk     { background: #fdecea; color: #8b2020; border-color: #f0a0a0; }
+
+  /* Present timeline */
+  .present-timeline { position: relative; }
+  .present-timeline::before { content: ''; position: absolute; left: 110px; top: 0; bottom: 0; width: 1px; background: #2a2926; z-index: 0; }
+  .ptl-group { margin-bottom: 8px; }
+  .ptl-row { display: flex; align-items: flex-start; }
+  .ptl-date { width: 98px; flex-shrink: 0; padding-top: 14px; text-align: right; padding-right: 16px; }
+  .ptl-date .day { font-size: 28px; font-weight: 600; color: #6b6860; display: block; line-height: 1; font-family: 'DM Mono', monospace; }
+  .ptl-date .month { font-size: 11px; color: #4a4845; display: block; margin-top: 3px; font-family: 'DM Mono', monospace; }
+  .ptl-node { width: 28px; flex-shrink: 0; display: flex; justify-content: center; padding-top: 20px; z-index: 1; position: relative; }
+  .ptl-node-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #1a1916; }
+  .ptl-cards { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
+
+  /* Present card */
+  .pcard { background: #1e1d1b; border: 1px solid #2a2926; border-radius: 12px; overflow: hidden; transition: border-color 0.2s, transform 0.15s; cursor: pointer; }
+  .pcard:hover { border-color: #4a4845; transform: translateX(3px); }
+  .pcard.decision { border-left: 4px solid var(--decision-dot); }
+  .pcard.action   { border-left: 4px solid var(--action-dot); }
+  .pcard.risk     { border-left: 4px solid var(--risk-dot); }
+  .pcard.focused  { border-color: #e8e6e0 !important; transform: translateX(4px); }
+  .pcard-main { padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; }
+  .pcard-chip { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 999px; flex-shrink: 0; margin-top: 3px; }
+  .decision .pcard-chip { background: var(--decision-bg); color: var(--decision-text); }
+  .action   .pcard-chip { background: var(--action-bg);   color: var(--action-text); }
+  .risk     .pcard-chip { background: var(--risk-bg);     color: var(--risk-text); }
+  .pcard-body { flex: 1; }
+  .pcard-title { font-size: 16px; font-weight: 500; color: #e8e6e0; line-height: 1.4; }
+  .pcard-meta { font-size: 11px; color: #4a4845; margin-top: 4px; }
+  .pcard-author { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; background: #2a2926; border: 1px solid #3a3835; color: #6b6860; margin-left: 6px; }
+  .pcard-memo { padding: 0 18px 14px 18px; font-size: 13px; color: #6b6860; line-height: 1.65; border-top: 1px solid #2a2926; display: none; }
+  .pcard-memo.open { display: block; padding-top: 12px; }
+
+  /* Legend */
+  .present-legend { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #6b6860; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Stats bar */
+  .present-stats { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stat-card { background: #1e1d1b; border: 1px solid #2a2926; border-radius: 8px; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+  .stat-num { font-size: 22px; font-weight: 600; color: #e8e6e0; font-family: 'DM Mono', monospace; }
+  .stat-label { font-size: 10px; color: #4a4845; }
+
+  /* ── MEMBER MANAGEMENT MODAL ── */
+  .member-manage-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; }
+  .member-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 13px; }
+  .member-manage-name { font-weight: 500; }
+  .member-manage-team { font-size: 11px; color: var(--text-tertiary); }
+  .member-add-row { display: flex; gap: 7px; margin-top: 4px; }
+  .member-add-row input { flex: 1; }
+  .member-add-row select { width: 140px; font-family: inherit; font-size: 13px; padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text-primary); outline: none; }
+
+  @media (max-width: 600px) {
+    .team-cards { grid-template-columns: 1fr; }
+    .timeline::before { left: 56px; }
+    .tl-date { width: 44px; padding-right: 10px; }
+    .tl-date .day { font-size: 14px; }
+    .content { padding: 14px; }
+    .present-content { padding: 20px 16px; }
+    .present-timeline::before { left: 70px; }
+    .ptl-date { width: 58px; padding-right: 12px; }
+    .ptl-date .day { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ SCREEN 1: TEAM SELECT ══ -->
+<div id="screen-select" class="screen center-screen active">
+  <div class="center-inner">
+    <div class="logo-mark">회고 타임라인</div>
+    <h1 class="screen-heading">팀을 선택하세요</h1>
+    <p class="screen-sub">팀별 타임라인에 이슈를 기록하고 회고를 시작해요</p>
+    <div class="team-cards">
+      <div class="team-card" onclick="selectTeam('operation')">
+        <div class="team-card-icon">🏢</div>
+        <div class="team-card-name">운영본부</div>
+        <div class="team-card-count" id="count-operation">멤버 로딩 중...</div>
+      </div>
+      <div class="team-card" onclick="selectTeam('smart-factory')">
+        <div class="team-card-icon">🏭</div>
+        <div class="team-card-name">스마트팩토리팀</div>
+        <div class="team-card-count" id="count-smart-factory">멤버 로딩 중...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2: MEMBER SELECT ══ -->
+<div id="screen-member" class="screen center-screen">
+  <div class="center-inner" style="max-width:560px">
+    <button class="back-btn" onclick="showScreen('select')">← 팀 선택으로</button>
+    <div class="logo-mark">회고 타임라인</div>
+    <h1 class="screen-heading" id="member-screen-heading">이름을 선택하세요</h1>
+    <p class="screen-sub">내 이름을 선택하면 내가 입력한 이슈만 보여요</p>
+    <div class="member-grid" id="member-grid"></div>
+
+    <div class="admin-divider">
+      <div class="admin-divider-line"></div>
+      <span class="admin-divider-label">퍼실리테이터</span>
+      <div class="admin-divider-line"></div>
+    </div>
+    <button class="present-btn" onclick="openPresentAuth()">
+      ▶ 현장 발표 모드 시작
+    </button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 3: MY TIMELINE ══ -->
+<div id="screen-timeline" class="screen">
+  <nav class="nav">
+    <div class="nav-left">
+      <div class="nav-logo" onclick="showScreen('select')">
+        <div class="nav-logo-icon"></div>
+        회고 타임라인
+      </div>
+      <div class="nav-sep"></div>
+      <span class="nav-pill" id="nav-team-label"></span>
+      <span class="nav-member-pill" id="nav-member-label"></span>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-ghost" onclick="openPeriodModal()">기간 설정</button>
+      <button class="btn btn-primary" onclick="openIssueModal()">+ 이슈 추가</button>
+    </div>
+  </nav>
+  <div class="content">
+    <div class="period-bar">
+      <div class="period-info">
+        <span class="period-label">프로젝트 기간</span>
+        <span class="period-dates" id="period-display">기간이 설정되지 않았어요</span>
+      </div>
+      <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="openPeriodModal()">설정</button>
+    </div>
+    <div class="private-notice">
+      🔒 지금은 내가 작성한 이슈만 보여요. 전체 통합본은 현장 발표 모드에서 확인할 수 있어요.
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">보기</span>
+      <button class="filter-btn active-all" data-filter="all" onclick="setFilter('all')">전체</button>
+      <button class="filter-btn" data-filter="decision" onclick="setFilter('decision')">
+        <span class="dot" style="background:var(--decision-dot)"></span>의사결정
+      </button>
+      <button class="filter-btn" data-filter="action" onclick="setFilter('action')">
+        <span class="dot" style="background:var(--action-dot)"></span>실행/작업
+      </button>
+      <button class="filter-btn" data-filter="risk" onclick="setFilter('risk')">
+        <span class="dot" style="background:var(--risk-dot)"></span>문제/리스크
+      </button>
+    </div>
+    <div class="timeline" id="timeline-container">
+      <div class="skeleton-wrap">
+        <div class="skeleton-card"><div class="skel" style="width:55px;height:34px"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px"><div class="skel" style="height:13px;width:65%"></div><div class="skel" style="height:10px;width:38%"></div></div></div>
+        <div class="skeleton-card"><div class="skel" style="width:55px;height:34px"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px"><div class="skel" style="height:13px;width:50%"></div><div class="skel" style="height:10px;width:32%"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 4: PRESENTATION ══ -->
+<div id="screen-present" class="screen">
+  <nav class="present-nav">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="present-logo"><div class="present-logo-icon"></div>회고 타임라인</div>
+      <span class="present-team-pill" id="present-team-label"></span>
+    </div>
+    <div class="present-controls">
+      <button class="present-btn-ctrl" onclick="openMemberManage()">멤버 관리</button>
+      <button class="present-btn-ctrl" onclick="openPeriodModal()">기간 설정</button>
+      <button class="present-btn-ctrl present-btn-exit" onclick="exitPresent()">← 나가기</button>
+    </div>
+  </nav>
+  <div class="present-content">
+    <div class="present-stats" id="present-stats"></div>
+    <div class="present-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--decision-dot)"></div>주요 의사결정</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--action-dot)"></div>실행 / 작업</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--risk-dot)"></div>문제 / 리스크</div>
+    </div>
+    <div class="present-filter">
+      <span class="present-filter-label">필터</span>
+      <button class="pfbtn pf-all" data-pf="all"      onclick="setPresentFilter('all')">전체</button>
+      <button class="pfbtn" data-pf="decision" onclick="setPresentFilter('decision')">
+        <span class="dot" style="background:var(--decision-dot)"></span>의사결정
+      </button>
+      <button class="pfbtn" data-pf="action" onclick="setPresentFilter('action')">
+        <span class="dot" style="background:var(--action-dot)"></span>실행/작업
+      </button>
+      <button class="pfbtn" data-pf="risk" onclick="setPresentFilter('risk')">
+        <span class="dot" style="background:var(--risk-dot)"></span>문제/리스크
+      </button>
+    </div>
+    <div class="present-timeline" id="present-timeline"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ISSUE FORM ══ -->
+<div class="overlay" id="overlay-issue" onclick="if(event.target===this)closeIssueModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="form-modal-title">이슈 추가</span>
+      <button class="modal-close" onclick="closeIssueModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>날짜 *</label><input type="date" id="f-date"></div>
+      <div class="field">
+        <label>이슈 유형 *</label>
+        <div class="type-row">
+          <div class="type-opt" id="opt-decision" onclick="selectType('decision')">
+            <span class="type-dot" style="background:var(--decision-dot)"></span>
+            <span class="type-name">주요 의사결정</span>
+          </div>
+          <div class="type-opt" id="opt-action" onclick="selectType('action')">
+            <span class="type-dot" style="background:var(--action-dot)"></span>
+            <span class="type-name">실행 / 작업</span>
+          </div>
+          <div class="type-opt" id="opt-risk" onclick="selectType('risk')">
+            <span class="type-dot" style="background:var(--risk-dot)"></span>
+            <span class="type-name">문제 / 리스크</span>
+          </div>
+        </div>
+      </div>
+      <div class="field"><label>이슈 제목 *</label><input type="text" id="f-title" placeholder="어떤 이슈였나요?"></div>
+      <div class="field"><label>메모 / 상세 내용 (선택)</label><textarea id="f-memo" placeholder="배경, 경위, 참고 링크 등"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeIssueModal()">취소</button>
+      <button class="btn btn-primary" id="btn-save-issue" onclick="saveIssue()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: PERIOD ══ -->
+<div class="overlay" id="overlay-period" onclick="if(event.target===this)closePeriodModal()">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header">
+      <span class="modal-title">프로젝트 기간 설정</span>
+      <button class="modal-close" onclick="closePeriodModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>시작일</label><input type="date" id="p-start"></div>
+      <div class="field"><label>종료일</label><input type="date" id="p-end"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePeriodModal()">취소</button>
+      <button class="btn btn-primary" onclick="savePeriod()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRM DELETE ══ -->
+<div class="overlay" id="overlay-confirm" onclick="if(event.target===this)closeConfirm()">
+  <div class="modal" style="max-width:340px">
+    <div class="modal-header">
+      <span class="modal-title">이슈 삭제</span>
+      <button class="modal-close" onclick="closeConfirm()">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-desc">이 이슈를 삭제할까요? 삭제한 이슈는 복구할 수 없어요.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">취소</button>
+      <button class="btn btn-primary" style="background:#d43030;border-color:#d43030" onclick="confirmDelete()">삭제</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: PRESENT AUTH ══ -->
+<div class="overlay" id="overlay-auth" onclick="if(event.target===this)closeAuth()">
+  <div class="modal" style="max-width:340px">
+    <div class="modal-header">
+      <span class="modal-title">퍼실리테이터 인증</span>
+      <button class="modal-close" onclick="closeAuth()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">발표 모드는 퍼실리테이터 전용이에요.<br>비밀번호를 입력하세요.</p>
+      <div class="field">
+        <label>비밀번호</label>
+        <input type="password" id="auth-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')submitAuth()">
+      </div>
+      <p style="font-size:11px;color:var(--text-tertiary)">기본 비밀번호: <code style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px">1234</code> — 아래에서 변경 가능해요</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAuth()">취소</button>
+      <button class="btn btn-primary" onclick="submitAuth()">입장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: MEMBER MANAGE ══ -->
+<div class="overlay" id="overlay-members" onclick="if(event.target===this)closeMemberManage()">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <span class="modal-title">멤버 관리</span>
+      <button class="modal-close" onclick="closeMemberManage()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">팀원 이름 목록을 관리해요. 추가한 멤버는 이름 선택 화면에 바로 반영돼요.</p>
+      <div class="member-manage-list" id="member-manage-list"></div>
+      <div class="member-add-row" style="margin-top:10px">
+        <input type="text" id="new-member-name" placeholder="이름 입력" onkeydown="if(event.key==='Enter')addMember()">
+        <select id="new-member-team">
+          <option value="operation">운영본부</option>
+          <option value="smart-factory">스마트팩토리팀</option>
+        </select>
+        <button class="btn btn-primary" onclick="addMember()" style="flex-shrink:0">추가</button>
+      </div>
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+        <div class="field">
+          <label>발표 모드 비밀번호 변경</label>
+          <div style="display:flex;gap:7px">
+            <input type="password" id="new-pw" placeholder="새 비밀번호" style="flex:1">
+            <button class="btn btn-ghost" onclick="changePw()" style="flex-shrink:0">변경</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeMemberManage()">완료</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import {
+  getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc,
+  onSnapshot, query, orderBy, where, getDoc, getDocs
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Firebase Config ──
+const app = initializeApp({
+  apiKey:            "AIzaSyDBzVw5_ZApF04sWOO_stqVEOHpKWSzEr8",
+  authDomain:        "cleanhub-timeline.firebaseapp.com",
+  projectId:         "cleanhub-timeline",
+  storageBucket:     "cleanhub-timeline.firebasestorage.app",
+  messagingSenderId: "408826640112",
+  appId:             "1:408826640112:web:c844cf0f212e4d7b137435"
+});
+const db = getFirestore(app);
+
+// ── STATE ──
+let currentTeam   = null;
+let currentMember = null;
+let currentFilter = 'all';
+let presentFilter = 'all';
+let editingId     = null;
+let deletingId    = null;
+let selectedType  = null;
+let unsubMy       = null;
+let unsubAll      = null;
+let allIssuesCache = [];
+let myIssuesCache  = [];
+
+const TEAM_LABELS = { 'operation': '운영본부', 'smart-factory': '스마트팩토리팀' };
+const TYPE_LABELS = { decision: '주요 의사결정', action: '실행 / 작업', risk: '문제 / 리스크' };
+const COLORS = { decision: 'var(--decision-dot)', action: 'var(--action-dot)', risk: 'var(--risk-dot)' };
+
+// ── EXPOSE ──
+window.selectTeam        = selectTeam;
+window.selectMember      = selectMember;
+window.goHome            = () => showScreen('select');
+window.showScreen        = showScreen;
+window.setFilter         = setFilter;
+window.setPresentFilter  = setPresentFilter;
+window.openIssueModal    = openIssueModal;
+window.closeIssueModal   = closeIssueModal;
+window.openEditModal     = openEditModal;
+window.openPeriodModal   = openPeriodModal;
+window.closePeriodModal  = closePeriodModal;
+window.savePeriod        = savePeriod;
+window.saveIssue         = saveIssue;
+window.openDeleteConfirm = openDeleteConfirm;
+window.closeConfirm      = closeConfirm;
+window.confirmDelete     = confirmDelete;
+window.selectType        = selectType;
+window.toggleMemo        = toggleMemo;
+window.togglePMemo       = togglePMemo;
+window.openPresentAuth   = openPresentAuth;
+window.closeAuth         = closeAuth;
+window.submitAuth        = submitAuth;
+window.exitPresent       = exitPresent;
+window.openMemberManage  = openMemberManage;
+window.closeMemberManage = closeMemberManage;
+window.addMember         = addMember;
+window.deleteMember      = deleteMember;
+window.changePw          = changePw;
+
+// ── FIRESTORE HELPERS ──
+function issuesCol(team)   { return collection(db, 'teams', team || currentTeam, 'issues'); }
+function settingsDoc(team) { return doc(db, 'teams', team || currentTeam, 'meta', 'settings'); }
+function membersCol()      { return collection(db, 'members'); }
+
+// ── INIT: load member counts ──
+async function init() {
+  try {
+    const snap = await getDocs(membersCol());
+    const members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const opCount = members.filter(m => m.team === 'operation').length;
+    const sfCount = members.filter(m => m.team === 'smart-factory').length;
+    document.getElementById('count-operation').textContent     = `멤버 ${opCount}명`;
+    document.getElementById('count-smart-factory').textContent = `멤버 ${sfCount}명`;
+  } catch {
+    document.getElementById('count-operation').textContent     = '';
+    document.getElementById('count-smart-factory').textContent = '';
+  }
+}
+init();
+
+// ── SCREENS ──
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+}
+
+// ── TEAM SELECT ──
+async function selectTeam(team) {
+  currentTeam = team;
+  document.getElementById('member-screen-heading').textContent =
+    `${TEAM_LABELS[team]} 멤버를 선택하세요`;
+  showScreen('member');
+  await loadMembers(team);
+}
+
+async function loadMembers(team) {
+  const grid = document.getElementById('member-grid');
+  grid.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center;padding:12px">로딩 중...</div>';
+  try {
+    const snap = await getDocs(query(membersCol()));
+    const members = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(m => m.team === team)
+      .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+    if (members.length === 0) {
+      grid.innerHTML = `<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center;padding:20px">등록된 멤버가 없어요.<br>발표 모드 → 멤버 관리에서 추가해주세요.</div>`;
+      return;
+    }
+    grid.innerHTML = members.map(m => {
+      const initials = m.name.slice(0, 2);
+      return `<button class="member-btn" onclick="selectMember('${m.name}')">
+        <div class="member-avatar">${initials}</div>
+        ${esc(m.name)}
+      </button>`;
+    }).join('');
+  } catch {
+    grid.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center">오류가 발생했어요</div>';
+  }
+}
+
+// ── MEMBER SELECT ──
+function selectMember(name) {
+  currentMember = name;
+  document.getElementById('nav-team-label').textContent   = TEAM_LABELS[currentTeam];
+  document.getElementById('nav-member-label').textContent = name;
+  showScreen('timeline');
+  loadPeriod();
+  subscribeMyIssues();
+}
+
+// ── PERIOD ──
+async function loadPeriod() {
+  try {
+    const snap = await getDoc(settingsDoc());
+    renderPeriodDisplay(snap.exists() ? snap.data().period : null);
+  } catch { renderPeriodDisplay(null); }
+}
+
+function renderPeriodDisplay(period) {
+  window._period = period;
+  document.getElementById('period-display').textContent =
+    (period && period.start && period.end)
+      ? `${period.start} ~ ${period.end}`
+      : '기간이 설정되지 않았어요';
+}
+
+function openPeriodModal() {
+  const p = window._period;
+  document.getElementById('p-start').value = p ? p.start : '';
+  document.getElementById('p-end').value   = p ? p.end   : '';
+  document.getElementById('overlay-period').classList.add('open');
+}
+function closePeriodModal() { document.getElementById('overlay-period').classList.remove('open'); }
+
+async function savePeriod() {
+  const s = document.getElementById('p-start').value;
+  const e = document.getElementById('p-end').value;
+  if (!s || !e) { showToast('시작일과 종료일을 모두 입력해주세요'); return; }
+  if (s > e)    { showToast('종료일은 시작일 이후여야 해요'); return; }
+  try {
+    await setDoc(settingsDoc(), { period: { start: s, end: e } }, { merge: true });
+    renderPeriodDisplay({ start: s, end: e });
+    closePeriodModal();
+    showToast('기간이 저장됐어요');
+  } catch { showToast('저장 중 오류가 발생했어요'); }
+}
+
+// ── MY ISSUES (private) ──
+function subscribeMyIssues() {
+  if (unsubMy) unsubMy();
+  const q = query(issuesCol(), where('author', '==', currentMember), orderBy('date'));
+  unsubMy = onSnapshot(q, snap => {
+    myIssuesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderMyTimeline(myIssuesCache);
+  }, err => { console.error(err); showToast('오류가 발생했어요'); });
+}
+
+// ── FILTER ──
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.className = 'filter-btn';
+    if (btn.dataset.filter === f) btn.classList.add(`active-${f === 'all' ? 'all' : f}`);
+  });
+  renderMyTimeline(myIssuesCache);
+}
+
+// ── MY TIMELINE RENDER ──
+function renderMyTimeline(all) {
+  const issues = currentFilter === 'all' ? all : all.filter(i => i.type === currentFilter);
+  const container = document.getElementById('timeline-container');
+
+  if (issues.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">${currentFilter === 'all' ? '아직 작성한 이슈가 없어요' : '해당 유형의 이슈가 없어요'}</div>
+        <p class="empty-sub">${currentFilter === 'all' ? '+ 이슈 추가 버튼을 눌러 첫 이슈를 기록해보세요' : '다른 유형으로 필터를 바꿔보세요'}</p>
+        ${currentFilter === 'all' ? `<button class="btn btn-primary" onclick="openIssueModal()">+ 첫 이슈 추가하기</button>` : ''}
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = buildTimelineHTML(issues, false);
+}
+
+function buildTimelineHTML(issues, isPresent) {
+  const byDate = {};
+  issues.forEach(i => { (byDate[i.date] = byDate[i.date] || []).push(i); });
+
+  return Object.entries(byDate)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, items]) => {
+      const d = new Date(date + 'T00:00:00');
+      const dotColor = items.length === 1 ? COLORS[items[0].type] : '#6b6860';
+
+      if (isPresent) {
+        return `<div class="ptl-group">
+          <div class="ptl-row">
+            <div class="ptl-date">
+              <span class="day">${d.getDate()}</span>
+              <span class="month">${d.getMonth()+1}월</span>
+            </div>
+            <div class="ptl-node"><div class="ptl-node-dot" style="background:${dotColor}"></div></div>
+            <div class="ptl-cards">${items.map(renderPresentCard).join('')}</div>
+          </div>
+        </div>`;
+      }
+
+      return `<div class="tl-group">
+        <div class="tl-date-row">
+          <div class="tl-date">
+            <span class="day">${d.getDate()}</span>
+            <span class="month">${d.getMonth()+1}월</span>
+          </div>
+          <div class="tl-node"><div class="tl-node-dot" style="background:${dotColor}"></div></div>
+          <div class="tl-cards">${items.map(renderCard).join('')}</div>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function renderCard(issue) {
+  const time = issue.createdAt ? formatTime(issue.createdAt) : '';
+  return `<div class="issue-card ${issue.type}" id="card-${issue.id}">
+    <div class="card-main" onclick="toggleMemo('${issue.id}')">
+      <span class="card-type-chip">${TYPE_LABELS[issue.type]}</span>
+      <div class="card-body">
+        <div class="card-title">${esc(issue.title)}</div>
+        ${time ? `<div class="card-meta">${time}</div>` : ''}
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="icon-btn" onclick="openEditModal('${issue.id}')" title="수정">✎</button>
+        <button class="icon-btn del" onclick="openDeleteConfirm('${issue.id}')" title="삭제">✕</button>
+      </div>
+    </div>
+    ${issue.memo ? `<div class="card-memo" id="memo-${issue.id}">${esc(issue.memo).replace(/\n/g,'<br>')}</div>` : ''}
+  </div>`;
+}
+
+function renderPresentCard(issue) {
+  const authorBadge = issue.author ? `<span class="pcard-author">${esc(issue.author)}</span>` : '';
+  const time = issue.createdAt ? formatTime(issue.createdAt) : '';
+  return `<div class="pcard ${issue.type}" onclick="togglePMemo('${issue.id}')">
+    <div class="pcard-main">
+      <span class="pcard-chip">${TYPE_LABELS[issue.type]}</span>
+      <div class="pcard-body">
+        <div class="pcard-title">${esc(issue.title)}</div>
+        <div class="pcard-meta">${time}${authorBadge}</div>
+      </div>
+    </div>
+    ${issue.memo ? `<div class="pcard-memo" id="pmemo-${issue.id}">${esc(issue.memo).replace(/\n/g,'<br>')}</div>` : ''}
+  </div>`;
+}
+
+function toggleMemo(id)  { document.getElementById('memo-'  + id)?.classList.toggle('open'); }
+function togglePMemo(id) { document.getElementById('pmemo-' + id)?.classList.toggle('open'); }
+
+// ── ISSUE FORM ──
+function openIssueModal(id) {
+  editingId = id || null;
+  selectedType = null;
+  ['decision','action','risk'].forEach(t => { document.getElementById('opt-'+t).className = 'type-opt'; });
+
+  if (id) {
+    const issue = myIssuesCache.find(i => i.id === id);
+    if (!issue) return;
+    document.getElementById('form-modal-title').textContent = '이슈 수정';
+    document.getElementById('f-date').value  = issue.date;
+    document.getElementById('f-title').value = issue.title;
+    document.getElementById('f-memo').value  = issue.memo || '';
+    selectType(issue.type);
+  } else {
+    document.getElementById('form-modal-title').textContent = '이슈 추가';
+    ['f-date','f-title','f-memo'].forEach(id => { document.getElementById(id).value = ''; });
+    const p = window._period;
+    if (p) { document.getElementById('f-date').min = p.start; document.getElementById('f-date').max = p.end; }
+    else   { ['min','max'].forEach(a => document.getElementById('f-date').removeAttribute(a)); }
+  }
+  document.getElementById('overlay-issue').classList.add('open');
+  setTimeout(() => document.getElementById('f-date').focus(), 100);
+}
+
+function openEditModal(id) { openIssueModal(id); }
+function closeIssueModal() { document.getElementById('overlay-issue').classList.remove('open'); }
+
+function selectType(type) {
+  selectedType = type;
+  ['decision','action','risk'].forEach(t => {
+    document.getElementById('opt-'+t).className = 'type-opt' + (t === type ? ' sel-'+t : '');
+  });
+}
+
+async function saveIssue() {
+  const date  = document.getElementById('f-date').value.trim();
+  const title = document.getElementById('f-title').value.trim();
+  const memo  = document.getElementById('f-memo').value.trim();
+  if (!date)         { showToast('날짜를 선택해주세요'); return; }
+  if (!selectedType) { showToast('이슈 유형을 선택해주세요'); return; }
+  if (!title)        { showToast('이슈 제목을 입력해주세요'); return; }
+  const p = window._period;
+  if (p && (date < p.start || date > p.end)) { showToast('프로젝트 기간 내 날짜를 선택해주세요'); return; }
+
+  const btn = document.getElementById('btn-save-issue');
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 저장 중...';
+  try {
+    if (editingId) {
+      await updateDoc(doc(db, 'teams', currentTeam, 'issues', editingId),
+        { date, type: selectedType, title, memo, updatedAt: new Date().toISOString() });
+      showToast('이슈가 수정됐어요');
+    } else {
+      await addDoc(issuesCol(), { date, type: selectedType, title, memo, author: currentMember, createdAt: new Date().toISOString() });
+      showToast('이슈가 추가됐어요');
+    }
+    closeIssueModal();
+  } catch (e) { console.error(e); showToast('저장 중 오류가 발생했어요'); }
+  finally { btn.disabled = false; btn.textContent = '저장'; }
+}
+
+// ── DELETE ──
+function openDeleteConfirm(id) { deletingId = id; document.getElementById('overlay-confirm').classList.add('open'); }
+function closeConfirm() { deletingId = null; document.getElementById('overlay-confirm').classList.remove('open'); }
+async function confirmDelete() {
+  if (!deletingId) return;
+  try {
+    await deleteDoc(doc(db, 'teams', currentTeam, 'issues', deletingId));
+    showToast('이슈가 삭제됐어요');
+  } catch { showToast('삭제 중 오류가 발생했어요'); }
+  closeConfirm();
+}
+
+// ── PRESENT AUTH ──
+function openPresentAuth() {
+  document.getElementById('auth-pw').value = '';
+  document.getElementById('overlay-auth').classList.add('open');
+  setTimeout(() => document.getElementById('auth-pw').focus(), 100);
+}
+function closeAuth() { document.getElementById('overlay-auth').classList.remove('open'); }
+
+async function submitAuth() {
+  const pw = document.getElementById('auth-pw').value;
+  try {
+    const snap = await getDoc(doc(db, 'config', 'facilitator'));
+    const saved = snap.exists() ? snap.data().password : '1234';
+    if (pw === saved) {
+      closeAuth();
+      enterPresent();
+    } else {
+      showToast('비밀번호가 틀렸어요');
+      document.getElementById('auth-pw').value = '';
+      document.getElementById('auth-pw').focus();
+    }
+  } catch {
+    if (pw === '1234') { closeAuth(); enterPresent(); }
+    else { showToast('비밀번호가 틀렸어요'); }
+  }
+}
+
+// ── PRESENT MODE ──
+function enterPresent() {
+  document.getElementById('present-team-label').textContent = TEAM_LABELS[currentTeam];
+  showScreen('present');
+  subscribeAllIssues();
+  loadPeriod();
+}
+
+function exitPresent() {
+  if (unsubAll) { unsubAll(); unsubAll = null; }
+  showScreen('member');
+}
+
+function subscribeAllIssues() {
+  if (unsubAll) unsubAll();
+  const q = query(issuesCol(), orderBy('date'));
+  unsubAll = onSnapshot(q, snap => {
+    allIssuesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderPresentTimeline(allIssuesCache);
+    renderStats(allIssuesCache);
+  }, err => { console.error(err); });
+}
+
+function renderStats(issues) {
+  const total    = issues.length;
+  const decision = issues.filter(i => i.type === 'decision').length;
+  const action   = issues.filter(i => i.type === 'action').length;
+  const risk     = issues.filter(i => i.type === 'risk').length;
+  const members  = [...new Set(issues.map(i => i.author).filter(Boolean))].length;
+  document.getElementById('present-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">전체 이슈</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--decision-dot)">${decision}</div><div class="stat-label">주요 의사결정</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--action-dot)">${action}</div><div class="stat-label">실행 / 작업</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--risk-dot)">${risk}</div><div class="stat-label">문제 / 리스크</div></div>
+    <div class="stat-card"><div class="stat-num">${members}</div><div class="stat-label">참여 멤버</div></div>`;
+}
+
+function setPresentFilter(f) {
+  presentFilter = f;
+  document.querySelectorAll('.pfbtn').forEach(btn => {
+    const t = btn.dataset.pf;
+    btn.className = 'pfbtn' + (t === f ? ` pf-${f}` : '');
+  });
+  renderPresentTimeline(allIssuesCache);
+}
+
+function renderPresentTimeline(all) {
+  const issues = presentFilter === 'all' ? all : all.filter(i => i.type === presentFilter);
+  const container = document.getElementById('present-timeline');
+  if (issues.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:60px 20px;color:#4a4845;font-size:14px">아직 기록된 이슈가 없어요</div>`;
+    return;
+  }
+  container.innerHTML = buildTimelineHTML(issues, true);
+}
+
+// ── MEMBER MANAGEMENT ──
+async function openMemberManage() {
+  document.getElementById('overlay-members').classList.add('open');
+  await refreshMemberList();
+}
+function closeMemberManage() {
+  document.getElementById('overlay-members').classList.remove('open');
+  loadMembers(currentTeam);
+  init();
+}
+
+async function refreshMemberList() {
+  const list = document.getElementById('member-manage-list');
+  list.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px">로딩 중...</div>';
+  const snap = await getDocs(membersCol());
+  const members = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+  if (members.length === 0) {
+    list.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px">등록된 멤버가 없어요</div>';
+    return;
+  }
+  list.innerHTML = members.map(m => `
+    <div class="member-manage-item">
+      <div>
+        <span class="member-manage-name">${esc(m.name)}</span>
+        <span class="member-manage-team">${TEAM_LABELS[m.team] || m.team}</span>
+      </div>
+      <button class="icon-btn del" onclick="deleteMember('${m.id}')" title="삭제">✕</button>
+    </div>`).join('');
+}
+
+async function addMember() {
+  const name = document.getElementById('new-member-name').value.trim();
+  const team = document.getElementById('new-member-team').value;
+  if (!name) { showToast('이름을 입력해주세요'); return; }
+  try {
+    await addDoc(membersCol(), { name, team });
+    document.getElementById('new-member-name').value = '';
+    await refreshMemberList();
+    showToast(`${name} 추가됐어요`);
+  } catch { showToast('추가 중 오류가 발생했어요'); }
+}
+
+async function deleteMember(id) {
+  if (!confirm('이 멤버를 삭제할까요?')) return;
+  try {
+    await deleteDoc(doc(db, 'members', id));
+    await refreshMemberList();
+    showToast('멤버가 삭제됐어요');
+  } catch { showToast('삭제 중 오류가 발생했어요'); }
+}
+
+async function changePw() {
+  const pw = document.getElementById('new-pw').value.trim();
+  if (!pw) { showToast('새 비밀번호를 입력해주세요'); return; }
+  try {
+    await setDoc(doc(db, 'config', 'facilitator'), { password: pw });
+    document.getElementById('new-pw').value = '';
+    showToast('비밀번호가 변경됐어요');
+  } catch { showToast('변경 중 오류가 발생했어요'); }
+}
+
+// ── HELPERS ──
+function formatTime(ts) {
+  const d = new Date(ts);
+  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+let _tt;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2400);
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    [closeIssueModal, closePeriodModal, closeConfirm, closeAuth, closeMemberManage]
+      .forEach(fn => fn());
+  }
+});
+</script>
+</body>
+</html>
