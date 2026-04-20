@@ -7,13 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f7f6f3;
-    --surface: #ffffff;
-    --border: #e8e6e0;
-    --border-soft: #f0ede8;
-    --text-primary: #1a1916;
-    --text-secondary: #6b6860;
-    --text-tertiary: #a09e9a;
+    --bg: #f7f6f3; --surface: #fff; --border: #e8e6e0; --border-soft: #f0ede8;
+    --text-primary: #1a1916; --text-secondary: #6b6860; --text-tertiary: #a09e9a;
     --decision-bg: #fef9ec; --decision-border: #f0d060; --decision-text: #7a5a00; --decision-dot: #d4a800;
     --action-bg: #eef6ec;   --action-border: #7ec47e;   --action-text: #2a6e2a;   --action-dot: #3a9e3a;
     --risk-bg: #fdecea;     --risk-border: #f0a0a0;     --risk-text: #8b2020;     --risk-dot: #d43030;
@@ -24,17 +19,16 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; line-height: 1.6; }
-
   .screen { display: none; min-height: 100vh; }
   .screen.active { display: flex; flex-direction: column; }
-
-  /* ── CENTERED SCREENS ── */
   .center-screen { align-items: center; justify-content: center; padding: 2rem; }
-  .center-inner { max-width: 500px; width: 100%; text-align: center; }
+  .center-inner { max-width: 520px; width: 100%; text-align: center; }
+
   .logo-mark { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2.5rem; }
-  .logo-mark::before { content: ''; display: block; width: 18px; height: 18px; background: var(--accent); border-radius: 4px; }
   .screen-heading { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
   .screen-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 2rem; font-weight: 300; }
+  .back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-tertiary); cursor: pointer; margin-bottom: 1.5rem; background: none; border: none; font-family: inherit; padding: 4px 0; }
+  .back-btn:hover { color: var(--text-primary); }
 
   /* ── TEAM CARDS ── */
   .team-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -44,28 +38,35 @@
   .team-card-name { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
   .team-card-count { font-size: 11px; color: var(--text-tertiary); }
 
+  /* ── MODE SELECT ── */
+  .mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .mode-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 28px 20px; cursor: pointer; text-align: left; transition: all 0.2s; box-shadow: var(--shadow); }
+  .mode-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .mode-card-icon { font-size: 28px; margin-bottom: 12px; }
+  .mode-card-name { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
+  .mode-card-desc { font-size: 12px; color: var(--text-tertiary); line-height: 1.5; }
+
   /* ── MEMBER GRID ── */
   .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; text-align: left; }
   .member-btn { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-primary); transition: all 0.15s; box-shadow: var(--shadow); display: flex; align-items: center; gap: 8px; }
   .member-btn:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
   .member-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--text-secondary); flex-shrink: 0; }
-  .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-tertiary); cursor: pointer; margin-bottom: 1.5rem; padding: 4px 0; background: none; border: none; font-family: inherit; }
-  .back-btn:hover { color: var(--text-primary); }
-
-  /* ── ADMIN SECTION ON MEMBER SCREEN ── */
-  .admin-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 16px; }
+  .admin-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 14px; }
   .admin-divider-line { flex: 1; height: 1px; background: var(--border); }
   .admin-divider-label { font-size: 11px; color: var(--text-tertiary); white-space: nowrap; }
-  .present-btn { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1.5px dashed var(--border); background: transparent; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .present-btn:hover { border-color: var(--accent); color: var(--text-primary); background: var(--surface); }
+  .facilitator-btn { width: 100%; padding: 11px; border-radius: var(--radius-sm); border: 1.5px dashed var(--border); background: transparent; font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .facilitator-btn:hover { border-color: var(--accent); color: var(--text-primary); background: var(--surface); }
 
   /* ── NAV ── */
   .nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 20px; height: 52px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; flex-shrink: 0; }
-  .nav-left { display: flex; align-items: center; gap: 12px; }
+  .nav-left { display: flex; align-items: center; gap: 10px; }
   .nav-logo { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--text-primary); cursor: pointer; }
   .nav-logo-icon { width: 20px; height: 20px; background: var(--accent); border-radius: 4px; flex-shrink: 0; }
   .nav-sep { width: 1px; height: 16px; background: var(--border); }
   .nav-pill { font-size: 11px; font-weight: 500; padding: 3px 9px; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; color: var(--text-secondary); }
+  .nav-mode-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+  .nav-mode-timeline { background: #E6F1FB; color: #185FA5; border: 1px solid #B5D4F4; }
+  .nav-mode-qa { background: #EAF3DE; color: #27500A; border: 1px solid #C0DD97; }
   .nav-member-pill { font-size: 11px; font-weight: 600; padding: 3px 9px; background: var(--accent); border: 1px solid var(--accent); border-radius: 999px; color: #fff; }
   .nav-right { display: flex; align-items: center; gap: 6px; }
   .btn { font-family: inherit; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; border: 1px solid transparent; white-space: nowrap; }
@@ -80,8 +81,6 @@
   .period-info { display: flex; align-items: center; gap: 10px; }
   .period-label { font-size: 10px; color: var(--text-tertiary); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
   .period-dates { font-size: 13px; font-weight: 500; color: var(--text-primary); font-family: 'DM Mono', monospace; }
-
-  /* ── PRIVATE NOTICE ── */
   .private-notice { background: #fef9ec; border: 1px solid #f0d060; border-radius: var(--radius-sm); padding: 9px 14px; margin-bottom: 16px; font-size: 12px; color: #7a5a00; display: flex; align-items: center; gap: 7px; }
 
   .filter-bar { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
@@ -90,8 +89,8 @@
   .filter-btn .dot { width: 6px; height: 6px; border-radius: 50%; }
   .filter-btn.active-all      { background: var(--accent); color: #fff; border-color: var(--accent); }
   .filter-btn.active-decision { background: var(--decision-bg); color: var(--decision-text); border-color: var(--decision-border); }
-  .filter-btn.active-action   { background: var(--action-bg);   color: var(--action-text);   border-color: var(--action-border); }
-  .filter-btn.active-risk     { background: var(--risk-bg);     color: var(--risk-text);     border-color: var(--risk-border); }
+  .filter-btn.active-action   { background: var(--action-bg); color: var(--action-text); border-color: var(--action-border); }
+  .filter-btn.active-risk     { background: var(--risk-bg); color: var(--risk-text); border-color: var(--risk-border); }
 
   /* ── TIMELINE ── */
   .timeline { position: relative; }
@@ -104,36 +103,48 @@
   .tl-node { width: 26px; flex-shrink: 0; display: flex; align-items: flex-start; justify-content: center; padding-top: 17px; position: relative; z-index: 1; }
   .tl-node-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border); border: 2px solid var(--surface); flex-shrink: 0; }
   .tl-cards { flex: 1; display: flex; flex-direction: column; gap: 5px; padding-bottom: 14px; }
-
-  /* ── ISSUE CARD ── */
   .issue-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: box-shadow 0.15s; }
   .issue-card:hover { box-shadow: var(--shadow-md); }
   .issue-card.decision { border-left: 3px solid var(--decision-dot); }
   .issue-card.action   { border-left: 3px solid var(--action-dot); }
   .issue-card.risk     { border-left: 3px solid var(--risk-dot); }
   .card-main { padding: 11px 13px; cursor: pointer; display: flex; align-items: flex-start; gap: 9px; }
-  .card-type-chip { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; margin-top: 2px; letter-spacing: 0.03em; }
+  .card-type-chip { font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 999px; flex-shrink: 0; margin-top: 2px; }
   .decision .card-type-chip { background: var(--decision-bg); color: var(--decision-text); }
-  .action   .card-type-chip { background: var(--action-bg);   color: var(--action-text); }
-  .risk     .card-type-chip { background: var(--risk-bg);     color: var(--risk-text); }
+  .action   .card-type-chip { background: var(--action-bg); color: var(--action-text); }
+  .risk     .card-type-chip { background: var(--risk-bg); color: var(--risk-text); }
   .card-body { flex: 1; min-width: 0; }
   .card-title { font-size: 13px; font-weight: 500; color: var(--text-primary); line-height: 1.4; }
   .card-meta { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
-  .card-author-badge { display: inline-block; font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); color: var(--text-secondary); margin-left: 4px; }
   .card-actions { display: flex; gap: 3px; flex-shrink: 0; }
   .icon-btn { width: 26px; height: 26px; border-radius: 5px; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-tertiary); transition: all 0.15s; font-size: 13px; }
   .icon-btn:hover { background: var(--bg); color: var(--text-primary); }
   .icon-btn.del:hover { background: #fdecea; color: var(--risk-text); }
-  .card-memo { padding: 0 13px 11px 13px; font-size: 12px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border-soft); display: none; }
+  .card-memo { padding: 0 13px 11px; font-size: 12px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border-soft); display: none; }
   .card-memo.open { display: block; padding-top: 9px; }
+
+  /* ── Q&A SCREEN ── */
+  .qa-content { flex: 1; padding: 20px; max-width: 680px; margin: 0 auto; width: 100%; }
+  .qa-anon-notice { background: #eef6ec; border: 1px solid #7ec47e; border-radius: var(--radius-sm); padding: 9px 14px; margin-bottom: 20px; font-size: 12px; color: #2a6e2a; display: flex; align-items: center; gap: 7px; }
+  .qa-list { display: flex; flex-direction: column; gap: 16px; }
+  .qa-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  .qa-card-header { padding: 14px 16px 12px; border-bottom: 1px solid var(--border-soft); }
+  .qa-card-num { font-size: 10px; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0.06em; margin-bottom: 4px; }
+  .qa-card-question { font-size: 14px; font-weight: 500; color: var(--text-primary); line-height: 1.5; margin-bottom: 4px; }
+  .qa-card-point { font-size: 11px; color: var(--text-tertiary); line-height: 1.4; }
+  .qa-card-body { padding: 14px 16px; }
+  .qa-input-row { display: flex; gap: 8px; align-items: flex-end; }
+  .qa-textarea { font-family: inherit; font-size: 13px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text-primary); outline: none; transition: border-color 0.15s; width: 100%; resize: vertical; min-height: 64px; line-height: 1.6; }
+  .qa-textarea:focus { border-color: var(--accent); background: var(--surface); }
+  .qa-submitted { font-size: 12px; color: var(--text-tertiary); margin-top: 8px; display: flex; align-items: center; gap: 5px; }
+  .qa-submitted-dot { width: 6px; height: 6px; border-radius: 50%; background: #3a9e3a; flex-shrink: 0; }
+  .qa-count { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
 
   /* ── SKELETON ── */
   .skeleton-wrap { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
   .skeleton-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; display: flex; gap: 10px; align-items: flex-start; }
   .skel { background: linear-gradient(90deg, var(--border) 25%, var(--border-soft) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 4px; }
   @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-  /* ── EMPTY STATE ── */
   .empty-state { text-align: center; padding: 50px 20px; }
   .empty-icon { font-size: 32px; margin-bottom: 12px; }
   .empty-title { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-bottom: 5px; }
@@ -150,7 +161,6 @@
   .modal-close:hover { background: var(--bg); }
   .modal-body { padding: 18px; display: flex; flex-direction: column; gap: 13px; }
   .modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 7px; }
-
   .field { display: flex; flex-direction: column; gap: 5px; }
   .field label { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
   .field input, .field textarea { font-family: inherit; font-size: 13px; padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text-primary); outline: none; transition: border-color 0.15s; width: 100%; }
@@ -162,11 +172,26 @@
   .type-opt .type-name { font-size: 10px; font-weight: 500; color: var(--text-secondary); line-height: 1.3; }
   .type-opt.sel-decision { border-color: var(--decision-dot); background: var(--decision-bg); }
   .type-opt.sel-decision .type-name { color: var(--decision-text); }
-  .type-opt.sel-action   { border-color: var(--action-dot); background: var(--action-bg); }
-  .type-opt.sel-action   .type-name { color: var(--action-text); }
-  .type-opt.sel-risk     { border-color: var(--risk-dot); background: var(--risk-bg); }
-  .type-opt.sel-risk     .type-name { color: var(--risk-text); }
+  .type-opt.sel-action { border-color: var(--action-dot); background: var(--action-bg); }
+  .type-opt.sel-action .type-name { color: var(--action-text); }
+  .type-opt.sel-risk { border-color: var(--risk-dot); background: var(--risk-bg); }
+  .type-opt.sel-risk .type-name { color: var(--risk-text); }
   .confirm-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+  /* ── MEMBER MANAGE ── */
+  .member-manage-list { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; }
+  .member-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 13px; }
+  .member-manage-team { font-size: 11px; color: var(--text-tertiary); margin-left: 6px; }
+  .member-add-row { display: flex; gap: 7px; margin-top: 6px; }
+  .member-add-row select { font-family: inherit; font-size: 13px; padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text-primary); outline: none; }
+
+  /* ── QUESTION MANAGE ── */
+  .q-manage-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+  .q-manage-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; }
+  .q-manage-body { flex: 1; min-width: 0; }
+  .q-manage-q { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+  .q-manage-hint { font-size: 11px; color: var(--text-tertiary); }
+  .q-add-form { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--border); }
 
   /* ── TOAST ── */
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 12px; font-weight: 500; padding: 9px 16px; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 400; white-space: nowrap; }
@@ -182,14 +207,27 @@
   .present-logo-icon { width: 22px; height: 22px; background: #e8e6e0; border-radius: 4px; }
   .present-team-pill { font-size: 11px; font-weight: 500; padding: 3px 10px; background: #2a2926; border: 1px solid #3a3835; border-radius: 999px; color: #a09e9a; }
   .present-controls { display: flex; align-items: center; gap: 8px; }
-  .present-btn-ctrl { font-family: inherit; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid #3a3835; background: transparent; color: #a09e9a; transition: all 0.15s; }
-  .present-btn-ctrl:hover { background: #2a2926; color: #e8e6e0; }
-  .present-btn-exit { background: #2a2926; color: #e8e6e0; border-color: #4a4845; }
+  .pbtn { font-family: inherit; font-size: 12px; font-weight: 500; padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid #3a3835; background: transparent; color: #a09e9a; transition: all 0.15s; }
+  .pbtn:hover { background: #2a2926; color: #e8e6e0; }
+  .pbtn-exit { background: #2a2926; color: #e8e6e0; border-color: #4a4845; }
 
-  .present-content { flex: 1; padding: 32px 40px; overflow-y: auto; max-width: 1100px; margin: 0 auto; width: 100%; }
+  /* Present tabs */
+  .present-tabs { display: flex; gap: 4px; background: #1a1916; padding: 0 28px; border-bottom: 1px solid #2a2926; }
+  .present-tab { font-family: inherit; font-size: 13px; font-weight: 500; padding: 12px 16px; background: transparent; border: none; color: #6b6860; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .present-tab.active { color: #e8e6e0; border-bottom-color: #e8e6e0; }
+  .present-tab-content { display: none; }
+  .present-tab-content.active { display: block; }
 
-  /* Filter bar (dark) */
-  .present-filter { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+  .present-content { flex: 1; padding: 28px 40px; overflow-y: auto; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* Stats */
+  .present-stats { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+  .stat-card { background: #1e1d1b; border: 1px solid #2a2926; border-radius: 8px; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
+  .stat-num { font-size: 22px; font-weight: 600; color: #e8e6e0; font-family: 'DM Mono', monospace; }
+  .stat-label { font-size: 10px; color: #4a4845; }
+
+  /* Present filter */
+  .present-filter { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
   .present-filter-label { font-size: 11px; color: #6b6860; margin-right: 4px; }
   .pfbtn { font-family: inherit; font-size: 11px; font-weight: 500; padding: 5px 12px; border-radius: 999px; cursor: pointer; border: 1px solid #3a3835; background: transparent; color: #6b6860; transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
   .pfbtn .dot { width: 6px; height: 6px; border-radius: 50%; }
@@ -200,122 +238,125 @@
 
   /* Present timeline */
   .present-timeline { position: relative; }
-  .present-timeline::before { content: ''; position: absolute; left: 110px; top: 0; bottom: 0; width: 1px; background: #2a2926; z-index: 0; }
-  .ptl-group { margin-bottom: 8px; }
+  .present-timeline::before { content: ''; position: absolute; left: 100px; top: 0; bottom: 0; width: 1px; background: #2a2926; }
+  .ptl-group { margin-bottom: 6px; }
   .ptl-row { display: flex; align-items: flex-start; }
-  .ptl-date { width: 98px; flex-shrink: 0; padding-top: 14px; text-align: right; padding-right: 16px; }
-  .ptl-date .day { font-size: 28px; font-weight: 600; color: #6b6860; display: block; line-height: 1; font-family: 'DM Mono', monospace; }
+  .ptl-date { width: 88px; flex-shrink: 0; padding-top: 14px; text-align: right; padding-right: 16px; }
+  .ptl-date .day { font-size: 26px; font-weight: 600; color: #6b6860; display: block; line-height: 1; font-family: 'DM Mono', monospace; }
   .ptl-date .month { font-size: 11px; color: #4a4845; display: block; margin-top: 3px; font-family: 'DM Mono', monospace; }
-  .ptl-node { width: 28px; flex-shrink: 0; display: flex; justify-content: center; padding-top: 20px; z-index: 1; position: relative; }
-  .ptl-node-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #1a1916; }
-  .ptl-cards { flex: 1; display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
-
-  /* Present card */
+  .ptl-node { width: 26px; flex-shrink: 0; display: flex; justify-content: center; padding-top: 20px; z-index: 1; position: relative; }
+  .ptl-node-dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid #1a1916; }
+  .ptl-cards { flex: 1; display: flex; flex-direction: column; gap: 7px; padding-bottom: 18px; }
   .pcard { background: #1e1d1b; border: 1px solid #2a2926; border-radius: 12px; overflow: hidden; transition: border-color 0.2s, transform 0.15s; cursor: pointer; }
   .pcard:hover { border-color: #4a4845; transform: translateX(3px); }
   .pcard.decision { border-left: 4px solid var(--decision-dot); }
   .pcard.action   { border-left: 4px solid var(--action-dot); }
   .pcard.risk     { border-left: 4px solid var(--risk-dot); }
-  .pcard.focused  { border-color: #e8e6e0 !important; transform: translateX(4px); }
-  .pcard-main { padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px; }
-  .pcard-chip { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 999px; flex-shrink: 0; margin-top: 3px; }
+  .pcard-main { padding: 14px 16px; display: flex; align-items: flex-start; gap: 10px; }
+  .pcard-chip { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; flex-shrink: 0; margin-top: 2px; }
   .decision .pcard-chip { background: var(--decision-bg); color: var(--decision-text); }
-  .action   .pcard-chip { background: var(--action-bg);   color: var(--action-text); }
-  .risk     .pcard-chip { background: var(--risk-bg);     color: var(--risk-text); }
+  .action   .pcard-chip { background: var(--action-bg); color: var(--action-text); }
+  .risk     .pcard-chip { background: var(--risk-bg); color: var(--risk-text); }
   .pcard-body { flex: 1; }
-  .pcard-title { font-size: 16px; font-weight: 500; color: #e8e6e0; line-height: 1.4; }
-  .pcard-meta { font-size: 11px; color: #4a4845; margin-top: 4px; }
-  .pcard-author { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 999px; background: #2a2926; border: 1px solid #3a3835; color: #6b6860; margin-left: 6px; }
-  .pcard-memo { padding: 0 18px 14px 18px; font-size: 13px; color: #6b6860; line-height: 1.65; border-top: 1px solid #2a2926; display: none; }
-  .pcard-memo.open { display: block; padding-top: 12px; }
+  .pcard-title { font-size: 15px; font-weight: 500; color: #e8e6e0; line-height: 1.4; }
+  .pcard-meta { font-size: 11px; color: #4a4845; margin-top: 3px; }
+  .pcard-memo { padding: 0 16px 13px; font-size: 13px; color: #6b6860; line-height: 1.65; border-top: 1px solid #2a2926; display: none; }
+  .pcard-memo.open { display: block; padding-top: 11px; }
 
-  /* Legend */
-  .present-legend { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #6b6860; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-  /* Stats bar */
-  .present-stats { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-  .stat-card { background: #1e1d1b; border: 1px solid #2a2926; border-radius: 8px; padding: 12px 16px; display: flex; flex-direction: column; gap: 2px; }
-  .stat-num { font-size: 22px; font-weight: 600; color: #e8e6e0; font-family: 'DM Mono', monospace; }
-  .stat-label { font-size: 10px; color: #4a4845; }
-
-  /* ── MEMBER MANAGEMENT MODAL ── */
-  .member-manage-list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; }
-  .member-manage-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 13px; }
-  .member-manage-name { font-weight: 500; }
-  .member-manage-team { font-size: 11px; color: var(--text-tertiary); }
-  .member-add-row { display: flex; gap: 7px; margin-top: 4px; }
-  .member-add-row input { flex: 1; }
-  .member-add-row select { width: 140px; font-family: inherit; font-size: 13px; padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text-primary); outline: none; }
+  /* Present Q&A */
+  .pqa-list { display: flex; flex-direction: column; gap: 24px; }
+  .pqa-card { background: #1e1d1b; border: 1px solid #2a2926; border-radius: 14px; overflow: hidden; }
+  .pqa-header { padding: 16px 20px 14px; border-bottom: 1px solid #2a2926; }
+  .pqa-num { font-size: 10px; font-weight: 600; color: #4a4845; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .pqa-question { font-size: 17px; font-weight: 500; color: #e8e6e0; line-height: 1.4; margin-bottom: 5px; }
+  .pqa-point { font-size: 12px; color: #6b6860; line-height: 1.5; }
+  .pqa-answers { padding: 14px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .pqa-answer-item { background: #2a2926; border-radius: 8px; padding: 12px 14px; font-size: 14px; color: #c8c6bc; line-height: 1.6; position: relative; }
+  .pqa-answer-num { font-size: 10px; color: #4a4845; margin-bottom: 4px; }
+  .pqa-empty { padding: 20px; text-align: center; color: #4a4845; font-size: 13px; }
+  .pqa-count-badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: #2a2926; color: #6b6860; margin-left: 8px; }
 
   @media (max-width: 600px) {
-    .team-cards { grid-template-columns: 1fr; }
+    .team-cards, .mode-cards { grid-template-columns: 1fr; }
     .timeline::before { left: 56px; }
     .tl-date { width: 44px; padding-right: 10px; }
     .tl-date .day { font-size: 14px; }
-    .content { padding: 14px; }
+    .content, .qa-content { padding: 14px; }
     .present-content { padding: 20px 16px; }
-    .present-timeline::before { left: 70px; }
-    .ptl-date { width: 58px; padding-right: 12px; }
-    .ptl-date .day { font-size: 20px; }
+    .present-timeline::before { left: 64px; }
+    .ptl-date { width: 52px; padding-right: 10px; }
+    .ptl-date .day { font-size: 18px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ══ SCREEN 1: TEAM SELECT ══ -->
+<!-- ══ S1: TEAM SELECT ══ -->
 <div id="screen-select" class="screen center-screen active">
   <div class="center-inner">
-    <div class="logo-mark">회고 타임라인</div>
     <h1 class="screen-heading">팀을 선택하세요</h1>
-    <p class="screen-sub">팀별 타임라인에 이슈를 기록하고 회고를 시작해요</p>
+    <p class="screen-sub">팀을 선택하면 타임라인과 회고 질문을 이용할 수 있어요</p>
     <div class="team-cards">
       <div class="team-card" onclick="selectTeam('operation')">
         <div class="team-card-icon">🏢</div>
         <div class="team-card-name">운영본부</div>
-        <div class="team-card-count" id="count-operation">멤버 로딩 중...</div>
+        <div class="team-card-count" id="count-operation">로딩 중...</div>
       </div>
       <div class="team-card" onclick="selectTeam('smart-factory')">
         <div class="team-card-icon">🏭</div>
         <div class="team-card-name">스마트팩토리팀</div>
-        <div class="team-card-count" id="count-smart-factory">멤버 로딩 중...</div>
+        <div class="team-card-count" id="count-smart-factory">로딩 중...</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══ SCREEN 2: MEMBER SELECT ══ -->
-<div id="screen-member" class="screen center-screen">
-  <div class="center-inner" style="max-width:560px">
+<!-- ══ S2: MODE SELECT ══ -->
+<div id="screen-mode" class="screen center-screen">
+  <div class="center-inner">
     <button class="back-btn" onclick="showScreen('select')">← 팀 선택으로</button>
-    <div class="logo-mark">회고 타임라인</div>
-    <h1 class="screen-heading" id="member-screen-heading">이름을 선택하세요</h1>
-    <p class="screen-sub">내 이름을 선택하면 내가 입력한 이슈만 보여요</p>
-    <div class="member-grid" id="member-grid"></div>
-
+    <h1 class="screen-heading" id="mode-heading">무엇을 하시겠어요?</h1>
+    <p class="screen-sub" id="mode-sub">타임라인 기록과 회고 질문 중 선택하세요</p>
+    <div class="mode-cards">
+      <div class="mode-card" onclick="selectMode('timeline')">
+        <div class="mode-card-icon">📅</div>
+        <div class="mode-card-name">타임라인 기록</div>
+        <div class="mode-card-desc">날짜별 이슈를 유형에 따라 기록해요. 이름 선택 후 내 이슈만 보여요.</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('qa')">
+        <div class="mode-card-icon">💬</div>
+        <div class="mode-card-name">회고 질문 답변</div>
+        <div class="mode-card-desc">퍼실리테이터가 준비한 질문에 익명으로 답변해요.</div>
+      </div>
+    </div>
     <div class="admin-divider">
       <div class="admin-divider-line"></div>
       <span class="admin-divider-label">퍼실리테이터</span>
       <div class="admin-divider-line"></div>
     </div>
-    <button class="present-btn" onclick="openPresentAuth()">
-      ▶ 현장 발표 모드 시작
-    </button>
+    <button class="facilitator-btn" onclick="openPresentAuth()">▶ 현장 발표 모드 시작</button>
   </div>
 </div>
 
-<!-- ══ SCREEN 3: MY TIMELINE ══ -->
+<!-- ══ S3: MEMBER SELECT (timeline only) ══ -->
+<div id="screen-member" class="screen center-screen">
+  <div class="center-inner" style="max-width:560px">
+    <button class="back-btn" onclick="showScreen('mode')">← 모드 선택으로</button>
+    <h1 class="screen-heading">이름을 선택하세요</h1>
+    <p class="screen-sub">내 이름을 선택하면 내가 작성한 이슈만 보여요</p>
+    <div class="member-grid" id="member-grid"></div>
+  </div>
+</div>
+
+<!-- ══ S4: TIMELINE ══ -->
 <div id="screen-timeline" class="screen">
   <nav class="nav">
     <div class="nav-left">
-      <div class="nav-logo" onclick="showScreen('select')">
-        <div class="nav-logo-icon"></div>
-        회고 타임라인
-      </div>
+      <div class="nav-logo" onclick="showScreen('select')"><div class="nav-logo-icon"></div></div>
       <div class="nav-sep"></div>
-      <span class="nav-pill" id="nav-team-label"></span>
-      <span class="nav-member-pill" id="nav-member-label"></span>
+      <span class="nav-pill" id="nav-team-tl"></span>
+      <span class="nav-mode-pill nav-mode-timeline">타임라인</span>
+      <span class="nav-member-pill" id="nav-member-tl"></span>
     </div>
     <div class="nav-right">
       <button class="btn btn-ghost" onclick="openPeriodModal()">기간 설정</button>
@@ -330,21 +371,13 @@
       </div>
       <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="openPeriodModal()">설정</button>
     </div>
-    <div class="private-notice">
-      🔒 지금은 내가 작성한 이슈만 보여요. 전체 통합본은 현장 발표 모드에서 확인할 수 있어요.
-    </div>
+    <div class="private-notice">🔒 내가 작성한 이슈만 보여요. 전체 통합본은 현장 발표 모드에서 확인할 수 있어요.</div>
     <div class="filter-bar">
       <span class="filter-label">보기</span>
       <button class="filter-btn active-all" data-filter="all" onclick="setFilter('all')">전체</button>
-      <button class="filter-btn" data-filter="decision" onclick="setFilter('decision')">
-        <span class="dot" style="background:var(--decision-dot)"></span>의사결정
-      </button>
-      <button class="filter-btn" data-filter="action" onclick="setFilter('action')">
-        <span class="dot" style="background:var(--action-dot)"></span>실행/작업
-      </button>
-      <button class="filter-btn" data-filter="risk" onclick="setFilter('risk')">
-        <span class="dot" style="background:var(--risk-dot)"></span>문제/리스크
-      </button>
+      <button class="filter-btn" data-filter="decision" onclick="setFilter('decision')"><span class="dot" style="background:var(--decision-dot)"></span>의사결정</button>
+      <button class="filter-btn" data-filter="action" onclick="setFilter('action')"><span class="dot" style="background:var(--action-dot)"></span>실행/작업</button>
+      <button class="filter-btn" data-filter="risk" onclick="setFilter('risk')"><span class="dot" style="background:var(--risk-dot)"></span>문제/리스크</button>
     </div>
     <div class="timeline" id="timeline-container">
       <div class="skeleton-wrap">
@@ -355,167 +388,165 @@
   </div>
 </div>
 
-<!-- ══ SCREEN 4: PRESENTATION ══ -->
-<div id="screen-present" class="screen">
-  <nav class="present-nav">
-    <div style="display:flex;align-items:center;gap:12px">
-      <div class="present-logo"><div class="present-logo-icon"></div>회고 타임라인</div>
-      <span class="present-team-pill" id="present-team-label"></span>
+<!-- ══ S5: Q&A ══ -->
+<div id="screen-qa" class="screen">
+  <nav class="nav">
+    <div class="nav-left">
+      <div class="nav-logo" onclick="showScreen('select')"><div class="nav-logo-icon"></div></div>
+      <div class="nav-sep"></div>
+      <span class="nav-pill" id="nav-team-qa"></span>
+      <span class="nav-mode-pill nav-mode-qa">회고 질문</span>
     </div>
-    <div class="present-controls">
-      <button class="present-btn-ctrl" onclick="openMemberManage()">멤버 관리</button>
-      <button class="present-btn-ctrl" onclick="openPeriodModal()">기간 설정</button>
-      <button class="present-btn-ctrl present-btn-exit" onclick="exitPresent()">← 나가기</button>
+    <div class="nav-right">
+      <button class="btn btn-ghost" onclick="showScreen('mode')">← 돌아가기</button>
     </div>
   </nav>
-  <div class="present-content">
-    <div class="present-stats" id="present-stats"></div>
-    <div class="present-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--decision-dot)"></div>주요 의사결정</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--action-dot)"></div>실행 / 작업</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--risk-dot)"></div>문제 / 리스크</div>
+  <div class="qa-content">
+    <div class="qa-anon-notice">🙈 답변은 익명으로 저장돼요. 발표 모드에서 전체 답변이 공개됩니다.</div>
+    <div class="qa-list" id="qa-list">
+      <div class="skeleton-wrap">
+        <div class="skeleton-card" style="height:120px"></div>
+        <div class="skeleton-card" style="height:120px"></div>
+      </div>
     </div>
-    <div class="present-filter">
-      <span class="present-filter-label">필터</span>
-      <button class="pfbtn pf-all" data-pf="all"      onclick="setPresentFilter('all')">전체</button>
-      <button class="pfbtn" data-pf="decision" onclick="setPresentFilter('decision')">
-        <span class="dot" style="background:var(--decision-dot)"></span>의사결정
-      </button>
-      <button class="pfbtn" data-pf="action" onclick="setPresentFilter('action')">
-        <span class="dot" style="background:var(--action-dot)"></span>실행/작업
-      </button>
-      <button class="pfbtn" data-pf="risk" onclick="setPresentFilter('risk')">
-        <span class="dot" style="background:var(--risk-dot)"></span>문제/리스크
-      </button>
-    </div>
-    <div class="present-timeline" id="present-timeline"></div>
   </div>
 </div>
 
-<!-- ══ MODAL: ISSUE FORM ══ -->
+<!-- ══ S6: PRESENTATION ══ -->
+<div id="screen-present" class="screen">
+  <nav class="present-nav">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="present-logo"><div class="present-logo-icon"></div></div>
+      <span class="present-team-pill" id="present-team-label"></span>
+    </div>
+    <div class="present-controls">
+      <button class="pbtn" onclick="openMemberManage()">멤버 관리</button>
+      <button class="pbtn" onclick="openQManage()">질문 관리</button>
+      <button class="pbtn" onclick="openPeriodModal()">기간 설정</button>
+      <button class="pbtn pbtn-exit" onclick="exitPresent()">← 나가기</button>
+    </div>
+  </nav>
+  <div style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+    <div class="present-tabs">
+      <button class="present-tab active" onclick="switchPresentTab('timeline', this)">📅 타임라인</button>
+      <button class="present-tab" onclick="switchPresentTab('qa', this)">💬 회고 질문</button>
+    </div>
+    <div style="flex:1;overflow-y:auto">
+      <!-- Timeline tab -->
+      <div id="ptab-timeline" class="present-tab-content active">
+        <div class="present-content">
+          <div class="present-stats" id="present-stats"></div>
+          <div class="present-filter">
+            <span class="present-filter-label">필터</span>
+            <button class="pfbtn pf-all" data-pf="all" onclick="setPresentFilter('all')">전체</button>
+            <button class="pfbtn" data-pf="decision" onclick="setPresentFilter('decision')"><span class="dot" style="background:var(--decision-dot)"></span>의사결정</button>
+            <button class="pfbtn" data-pf="action" onclick="setPresentFilter('action')"><span class="dot" style="background:var(--action-dot)"></span>실행/작업</button>
+            <button class="pfbtn" data-pf="risk" onclick="setPresentFilter('risk')"><span class="dot" style="background:var(--risk-dot)"></span>문제/리스크</button>
+          </div>
+          <div class="present-timeline" id="present-timeline"></div>
+        </div>
+      </div>
+      <!-- Q&A tab -->
+      <div id="ptab-qa" class="present-tab-content">
+        <div class="present-content">
+          <div class="pqa-list" id="present-qa-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Issue Form -->
 <div class="overlay" id="overlay-issue" onclick="if(event.target===this)closeIssueModal()">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="form-modal-title">이슈 추가</span>
-      <button class="modal-close" onclick="closeIssueModal()">×</button>
-    </div>
+    <div class="modal-header"><span class="modal-title" id="form-modal-title">이슈 추가</span><button class="modal-close" onclick="closeIssueModal()">×</button></div>
     <div class="modal-body">
       <div class="field"><label>날짜 *</label><input type="date" id="f-date"></div>
       <div class="field">
         <label>이슈 유형 *</label>
         <div class="type-row">
-          <div class="type-opt" id="opt-decision" onclick="selectType('decision')">
-            <span class="type-dot" style="background:var(--decision-dot)"></span>
-            <span class="type-name">주요 의사결정</span>
-          </div>
-          <div class="type-opt" id="opt-action" onclick="selectType('action')">
-            <span class="type-dot" style="background:var(--action-dot)"></span>
-            <span class="type-name">실행 / 작업</span>
-          </div>
-          <div class="type-opt" id="opt-risk" onclick="selectType('risk')">
-            <span class="type-dot" style="background:var(--risk-dot)"></span>
-            <span class="type-name">문제 / 리스크</span>
-          </div>
+          <div class="type-opt" id="opt-decision" onclick="selectType('decision')"><span class="type-dot" style="background:var(--decision-dot)"></span><span class="type-name">주요 의사결정</span></div>
+          <div class="type-opt" id="opt-action" onclick="selectType('action')"><span class="type-dot" style="background:var(--action-dot)"></span><span class="type-name">실행 / 작업</span></div>
+          <div class="type-opt" id="opt-risk" onclick="selectType('risk')"><span class="type-dot" style="background:var(--risk-dot)"></span><span class="type-name">문제 / 리스크</span></div>
         </div>
       </div>
       <div class="field"><label>이슈 제목 *</label><input type="text" id="f-title" placeholder="어떤 이슈였나요?"></div>
       <div class="field"><label>메모 / 상세 내용 (선택)</label><textarea id="f-memo" placeholder="배경, 경위, 참고 링크 등"></textarea></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeIssueModal()">취소</button>
-      <button class="btn btn-primary" id="btn-save-issue" onclick="saveIssue()">저장</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeIssueModal()">취소</button><button class="btn btn-primary" id="btn-save-issue" onclick="saveIssue()">저장</button></div>
   </div>
 </div>
 
-<!-- ══ MODAL: PERIOD ══ -->
+<!-- MODAL: Period -->
 <div class="overlay" id="overlay-period" onclick="if(event.target===this)closePeriodModal()">
   <div class="modal" style="max-width:360px">
-    <div class="modal-header">
-      <span class="modal-title">프로젝트 기간 설정</span>
-      <button class="modal-close" onclick="closePeriodModal()">×</button>
-    </div>
+    <div class="modal-header"><span class="modal-title">프로젝트 기간 설정</span><button class="modal-close" onclick="closePeriodModal()">×</button></div>
     <div class="modal-body">
       <div class="field"><label>시작일</label><input type="date" id="p-start"></div>
       <div class="field"><label>종료일</label><input type="date" id="p-end"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closePeriodModal()">취소</button>
-      <button class="btn btn-primary" onclick="savePeriod()">저장</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closePeriodModal()">취소</button><button class="btn btn-primary" onclick="savePeriod()">저장</button></div>
   </div>
 </div>
 
-<!-- ══ MODAL: CONFIRM DELETE ══ -->
+<!-- MODAL: Confirm Delete -->
 <div class="overlay" id="overlay-confirm" onclick="if(event.target===this)closeConfirm()">
   <div class="modal" style="max-width:340px">
-    <div class="modal-header">
-      <span class="modal-title">이슈 삭제</span>
-      <button class="modal-close" onclick="closeConfirm()">×</button>
-    </div>
-    <div class="modal-body">
-      <p class="confirm-desc">이 이슈를 삭제할까요? 삭제한 이슈는 복구할 수 없어요.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeConfirm()">취소</button>
-      <button class="btn btn-primary" style="background:#d43030;border-color:#d43030" onclick="confirmDelete()">삭제</button>
-    </div>
+    <div class="modal-header"><span class="modal-title">삭제 확인</span><button class="modal-close" onclick="closeConfirm()">×</button></div>
+    <div class="modal-body"><p class="confirm-desc">삭제할까요? 복구할 수 없어요.</p></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeConfirm()">취소</button><button class="btn btn-primary" style="background:#d43030;border-color:#d43030" onclick="confirmDelete()">삭제</button></div>
   </div>
 </div>
 
-<!-- ══ MODAL: PRESENT AUTH ══ -->
+<!-- MODAL: Auth -->
 <div class="overlay" id="overlay-auth" onclick="if(event.target===this)closeAuth()">
   <div class="modal" style="max-width:340px">
-    <div class="modal-header">
-      <span class="modal-title">퍼실리테이터 인증</span>
-      <button class="modal-close" onclick="closeAuth()">×</button>
-    </div>
+    <div class="modal-header"><span class="modal-title">퍼실리테이터 인증</span><button class="modal-close" onclick="closeAuth()">×</button></div>
     <div class="modal-body">
-      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">발표 모드는 퍼실리테이터 전용이에요.<br>비밀번호를 입력하세요.</p>
-      <div class="field">
-        <label>비밀번호</label>
-        <input type="password" id="auth-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')submitAuth()">
-      </div>
-      <p style="font-size:11px;color:var(--text-tertiary)">기본 비밀번호: <code style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px">1234</code> — 아래에서 변경 가능해요</p>
+      <p style="font-size:13px;color:var(--text-secondary)">발표 모드는 퍼실리테이터 전용이에요.</p>
+      <div class="field"><label>비밀번호</label><input type="password" id="auth-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')submitAuth()"></div>
+      <p style="font-size:11px;color:var(--text-tertiary)">기본 비밀번호: <code style="font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px">1234</code></p>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeAuth()">취소</button>
-      <button class="btn btn-primary" onclick="submitAuth()">입장</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeAuth()">취소</button><button class="btn btn-primary" onclick="submitAuth()">입장</button></div>
   </div>
 </div>
 
-<!-- ══ MODAL: MEMBER MANAGE ══ -->
+<!-- MODAL: Member Manage -->
 <div class="overlay" id="overlay-members" onclick="if(event.target===this)closeMemberManage()">
   <div class="modal" style="max-width:480px">
-    <div class="modal-header">
-      <span class="modal-title">멤버 관리</span>
-      <button class="modal-close" onclick="closeMemberManage()">×</button>
-    </div>
+    <div class="modal-header"><span class="modal-title">멤버 관리</span><button class="modal-close" onclick="closeMemberManage()">×</button></div>
     <div class="modal-body">
-      <p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">팀원 이름 목록을 관리해요. 추가한 멤버는 이름 선택 화면에 바로 반영돼요.</p>
       <div class="member-manage-list" id="member-manage-list"></div>
       <div class="member-add-row" style="margin-top:10px">
-        <input type="text" id="new-member-name" placeholder="이름 입력" onkeydown="if(event.key==='Enter')addMember()">
-        <select id="new-member-team">
+        <input type="text" id="new-member-name" placeholder="이름 입력" onkeydown="if(event.key==='Enter')addMember()" style="flex:1;font-family:inherit;font-size:13px;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text-primary);outline:none;">
+        <select id="new-member-team" style="font-family:inherit;font-size:13px;padding:8px 11px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text-primary);outline:none;">
           <option value="operation">운영본부</option>
           <option value="smart-factory">스마트팩토리팀</option>
         </select>
-        <button class="btn btn-primary" onclick="addMember()" style="flex-shrink:0">추가</button>
+        <button class="btn btn-primary" onclick="addMember()">추가</button>
       </div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-        <div class="field">
-          <label>발표 모드 비밀번호 변경</label>
-          <div style="display:flex;gap:7px">
-            <input type="password" id="new-pw" placeholder="새 비밀번호" style="flex:1">
-            <button class="btn btn-ghost" onclick="changePw()" style="flex-shrink:0">변경</button>
-          </div>
-        </div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+        <div class="field"><label>발표 모드 비밀번호 변경</label><div style="display:flex;gap:7px"><input type="password" id="new-pw" placeholder="새 비밀번호" style="flex:1"><button class="btn btn-ghost" onclick="changePw()">변경</button></div></div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="closeMemberManage()">완료</button>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeMemberManage()">완료</button></div>
+  </div>
+</div>
+
+<!-- MODAL: Question Manage -->
+<div class="overlay" id="overlay-qmanage" onclick="if(event.target===this)closeQManage()">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header"><span class="modal-title">회고 질문 관리</span><button class="modal-close" onclick="closeQManage()">×</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text-secondary);margin-bottom:8px">질문 목록을 관리해요. 팀별로 질문이 저장돼요.</p>
+      <div class="q-manage-list" id="q-manage-list"></div>
+      <div class="q-add-form">
+        <div class="field"><label>질문 내용 *</label><textarea id="new-q-text" placeholder="예: 이번 이슈에서 가장 힘들었던 순간을 한 문장으로 써주세요." style="min-height:56px"></textarea></div>
+        <div class="field"><label>포인트 / 진행 힌트 (선택)</label><input type="text" id="new-q-hint" placeholder="예: 상황 묘사 또는 감정 표현 모두 가능. 익명 수렴."></div>
+        <button class="btn btn-primary" onclick="addQuestion()" style="align-self:flex-end">질문 추가</button>
+      </div>
     </div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="closeQManage()">완료</button></div>
   </div>
 </div>
 
@@ -528,520 +559,419 @@ import {
   onSnapshot, query, orderBy, where, getDoc, getDocs
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-// ── Firebase Config ──
 const app = initializeApp({
-  apiKey:            "AIzaSyDBzVw5_ZApF04sWOO_stqVEOHpKWSzEr8",
-  authDomain:        "cleanhub-timeline.firebaseapp.com",
-  projectId:         "cleanhub-timeline",
-  storageBucket:     "cleanhub-timeline.firebasestorage.app",
+  apiKey: "AIzaSyDBzVw5_ZApF04sWOO_stqVEOHpKWSzEr8",
+  authDomain: "cleanhub-timeline.firebaseapp.com",
+  projectId: "cleanhub-timeline",
+  storageBucket: "cleanhub-timeline.firebasestorage.app",
   messagingSenderId: "408826640112",
-  appId:             "1:408826640112:web:c844cf0f212e4d7b137435"
+  appId: "1:408826640112:web:c844cf0f212e4d7b137435"
 });
 const db = getFirestore(app);
 
 // ── STATE ──
-let currentTeam   = null;
-let currentMember = null;
-let currentFilter = 'all';
-let presentFilter = 'all';
-let editingId     = null;
-let deletingId    = null;
-let selectedType  = null;
-let unsubMy       = null;
-let unsubAll      = null;
-let allIssuesCache = [];
-let myIssuesCache  = [];
+let currentTeam = null, currentMember = null, currentMode = null;
+let currentFilter = 'all', presentFilter = 'all';
+let editingId = null, deletingId = null, selectedType = null;
+let unsubMy = null, unsubAll = null, unsubQA = null, unsubPQA = null;
+let myIssuesCache = [], allIssuesCache = [];
+let qaAnswersCache = {};
 
 const TEAM_LABELS = { 'operation': '운영본부', 'smart-factory': '스마트팩토리팀' };
 const TYPE_LABELS = { decision: '주요 의사결정', action: '실행 / 작업', risk: '문제 / 리스크' };
 const COLORS = { decision: 'var(--decision-dot)', action: 'var(--action-dot)', risk: 'var(--risk-dot)' };
 
 // ── EXPOSE ──
-window.selectTeam        = selectTeam;
-window.selectMember      = selectMember;
-window.goHome            = () => showScreen('select');
-window.showScreen        = showScreen;
-window.setFilter         = setFilter;
-window.setPresentFilter  = setPresentFilter;
-window.openIssueModal    = openIssueModal;
-window.closeIssueModal   = closeIssueModal;
-window.openEditModal     = openEditModal;
-window.openPeriodModal   = openPeriodModal;
-window.closePeriodModal  = closePeriodModal;
-window.savePeriod        = savePeriod;
-window.saveIssue         = saveIssue;
-window.openDeleteConfirm = openDeleteConfirm;
-window.closeConfirm      = closeConfirm;
-window.confirmDelete     = confirmDelete;
-window.selectType        = selectType;
-window.toggleMemo        = toggleMemo;
-window.togglePMemo       = togglePMemo;
-window.openPresentAuth   = openPresentAuth;
-window.closeAuth         = closeAuth;
-window.submitAuth        = submitAuth;
-window.exitPresent       = exitPresent;
-window.openMemberManage  = openMemberManage;
-window.closeMemberManage = closeMemberManage;
-window.addMember         = addMember;
-window.deleteMember      = deleteMember;
-window.changePw          = changePw;
+window.selectTeam = selectTeam; window.selectMode = selectMode; window.selectMember = selectMember;
+window.showScreen = showScreen; window.setFilter = setFilter; window.setPresentFilter = setPresentFilter;
+window.openIssueModal = openIssueModal; window.closeIssueModal = closeIssueModal;
+window.openEditModal = openEditModal; window.openPeriodModal = openPeriodModal; window.closePeriodModal = closePeriodModal;
+window.savePeriod = savePeriod; window.saveIssue = saveIssue;
+window.openDeleteConfirm = openDeleteConfirm; window.closeConfirm = closeConfirm; window.confirmDelete = confirmDelete;
+window.selectType = selectType; window.toggleMemo = toggleMemo; window.togglePMemo = togglePMemo;
+window.openPresentAuth = openPresentAuth; window.closeAuth = closeAuth; window.submitAuth = submitAuth; window.exitPresent = exitPresent;
+window.openMemberManage = openMemberManage; window.closeMemberManage = closeMemberManage; window.addMember = addMember; window.deleteMember = deleteMember; window.changePw = changePw;
+window.openQManage = openQManage; window.closeQManage = closeQManage; window.addQuestion = addQuestion; window.deleteQuestion = deleteQuestion;
+window.submitQAAnswer = submitQAAnswer; window.switchPresentTab = switchPresentTab;
 
-// ── FIRESTORE HELPERS ──
-function issuesCol(team)   { return collection(db, 'teams', team || currentTeam, 'issues'); }
-function settingsDoc(team) { return doc(db, 'teams', team || currentTeam, 'meta', 'settings'); }
-function membersCol()      { return collection(db, 'members'); }
+// ── HELPERS ──
+function issuesCol(t)  { return collection(db, 'teams', t||currentTeam, 'issues'); }
+function settingsDoc(t){ return doc(db, 'teams', t||currentTeam, 'meta', 'settings'); }
+function membersCol()  { return collection(db, 'members'); }
+function questionsCol(){ return collection(db, 'teams', currentTeam, 'questions'); }
+function answersCol(qid){ return collection(db, 'teams', currentTeam, 'questions', qid, 'answers'); }
 
-// ── INIT: load member counts ──
-async function init() {
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatTime(ts){ const d=new Date(ts); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+let _tt;
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),2400); }
+function showScreen(name){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+name).classList.add('active'); }
+
+// ── INIT ──
+(async function init(){
   try {
     const snap = await getDocs(membersCol());
-    const members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const opCount = members.filter(m => m.team === 'operation').length;
-    const sfCount = members.filter(m => m.team === 'smart-factory').length;
-    document.getElementById('count-operation').textContent     = `멤버 ${opCount}명`;
-    document.getElementById('count-smart-factory').textContent = `멤버 ${sfCount}명`;
-  } catch {
-    document.getElementById('count-operation').textContent     = '';
-    document.getElementById('count-smart-factory').textContent = '';
+    const members = snap.docs.map(d=>({...d.data()}));
+    document.getElementById('count-operation').textContent = `멤버 ${members.filter(m=>m.team==='operation').length}명`;
+    document.getElementById('count-smart-factory').textContent = `멤버 ${members.filter(m=>m.team==='smart-factory').length}명`;
+  } catch { document.getElementById('count-operation').textContent=''; document.getElementById('count-smart-factory').textContent=''; }
+})();
+
+// ── TEAM ──
+function selectTeam(team){
+  currentTeam = team;
+  document.getElementById('mode-heading').textContent = `${TEAM_LABELS[team]} — 무엇을 하시겠어요?`;
+  document.getElementById('mode-sub').textContent = '타임라인 기록과 회고 질문 중 선택하세요';
+  showScreen('mode');
+}
+
+// ── MODE ──
+function selectMode(mode){
+  currentMode = mode;
+  if(mode === 'qa'){
+    document.getElementById('nav-team-qa').textContent = TEAM_LABELS[currentTeam];
+    showScreen('qa');
+    loadQAScreen();
+  } else {
+    showScreen('member');
+    loadMembers();
   }
 }
-init();
 
-// ── SCREENS ──
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + name).classList.add('active');
-}
-
-// ── TEAM SELECT ──
-async function selectTeam(team) {
-  currentTeam = team;
-  document.getElementById('member-screen-heading').textContent =
-    `${TEAM_LABELS[team]} 멤버를 선택하세요`;
-  showScreen('member');
-  await loadMembers(team);
-}
-
-async function loadMembers(team) {
+// ── MEMBERS ──
+async function loadMembers(){
   const grid = document.getElementById('member-grid');
   grid.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center;padding:12px">로딩 중...</div>';
   try {
-    const snap = await getDocs(query(membersCol()));
-    const members = snap.docs
-      .map(d => ({ id: d.id, ...d.data() }))
-      .filter(m => m.team === team)
-      .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-
-    if (members.length === 0) {
-      grid.innerHTML = `<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center;padding:20px">등록된 멤버가 없어요.<br>발표 모드 → 멤버 관리에서 추가해주세요.</div>`;
-      return;
-    }
-    grid.innerHTML = members.map(m => {
-      const initials = m.name.slice(0, 2);
-      return `<button class="member-btn" onclick="selectMember('${m.name}')">
-        <div class="member-avatar">${initials}</div>
-        ${esc(m.name)}
-      </button>`;
-    }).join('');
-  } catch {
-    grid.innerHTML = '<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center">오류가 발생했어요</div>';
-  }
+    const snap = await getDocs(membersCol());
+    const members = snap.docs.map(d=>({id:d.id,...d.data()})).filter(m=>m.team===currentTeam).sort((a,b)=>a.name.localeCompare(b.name,'ko'));
+    if(!members.length){ grid.innerHTML='<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center;padding:20px">등록된 멤버가 없어요.<br>발표 모드 → 멤버 관리에서 추가해주세요.</div>'; return; }
+    grid.innerHTML = members.map(m=>`<button class="member-btn" onclick="selectMember('${esc(m.name)}')""><div class="member-avatar">${m.name.slice(0,2)}</div>${esc(m.name)}</button>`).join('');
+  } catch { grid.innerHTML='<div style="font-size:13px;color:var(--text-tertiary);grid-column:1/-1;text-align:center">오류가 발생했어요</div>'; }
 }
 
-// ── MEMBER SELECT ──
-function selectMember(name) {
+function selectMember(name){
   currentMember = name;
-  document.getElementById('nav-team-label').textContent   = TEAM_LABELS[currentTeam];
-  document.getElementById('nav-member-label').textContent = name;
+  document.getElementById('nav-team-tl').textContent = TEAM_LABELS[currentTeam];
+  document.getElementById('nav-member-tl').textContent = name;
   showScreen('timeline');
   loadPeriod();
   subscribeMyIssues();
 }
 
 // ── PERIOD ──
-async function loadPeriod() {
-  try {
-    const snap = await getDoc(settingsDoc());
-    renderPeriodDisplay(snap.exists() ? snap.data().period : null);
-  } catch { renderPeriodDisplay(null); }
+async function loadPeriod(){
+  try { const s=await getDoc(settingsDoc()); renderPeriodDisplay(s.exists()?s.data().period:null); }
+  catch { renderPeriodDisplay(null); }
+}
+function renderPeriodDisplay(p){ window._period=p; document.getElementById('period-display').textContent=(p&&p.start&&p.end)?`${p.start} ~ ${p.end}`:'기간이 설정되지 않았어요'; }
+function openPeriodModal(){ const p=window._period; document.getElementById('p-start').value=p?p.start:''; document.getElementById('p-end').value=p?p.end:''; document.getElementById('overlay-period').classList.add('open'); }
+function closePeriodModal(){ document.getElementById('overlay-period').classList.remove('open'); }
+async function savePeriod(){
+  const s=document.getElementById('p-start').value, e=document.getElementById('p-end').value;
+  if(!s||!e){ showToast('시작일과 종료일을 입력해주세요'); return; }
+  if(s>e){ showToast('종료일은 시작일 이후여야 해요'); return; }
+  try { await setDoc(settingsDoc(),{period:{start:s,end:e}},{merge:true}); renderPeriodDisplay({start:s,end:e}); closePeriodModal(); showToast('기간이 저장됐어요'); }
+  catch { showToast('저장 중 오류가 발생했어요'); }
 }
 
-function renderPeriodDisplay(period) {
-  window._period = period;
-  document.getElementById('period-display').textContent =
-    (period && period.start && period.end)
-      ? `${period.start} ~ ${period.end}`
-      : '기간이 설정되지 않았어요';
+// ── TIMELINE ──
+function subscribeMyIssues(){
+  if(unsubMy) unsubMy();
+  const q=query(issuesCol(),where('author','==',currentMember),orderBy('date'));
+  unsubMy=onSnapshot(q,snap=>{ myIssuesCache=snap.docs.map(d=>({id:d.id,...d.data()})); renderMyTimeline(myIssuesCache); },err=>{ console.error(err); showToast('오류가 발생했어요'); });
 }
-
-function openPeriodModal() {
-  const p = window._period;
-  document.getElementById('p-start').value = p ? p.start : '';
-  document.getElementById('p-end').value   = p ? p.end   : '';
-  document.getElementById('overlay-period').classList.add('open');
-}
-function closePeriodModal() { document.getElementById('overlay-period').classList.remove('open'); }
-
-async function savePeriod() {
-  const s = document.getElementById('p-start').value;
-  const e = document.getElementById('p-end').value;
-  if (!s || !e) { showToast('시작일과 종료일을 모두 입력해주세요'); return; }
-  if (s > e)    { showToast('종료일은 시작일 이후여야 해요'); return; }
-  try {
-    await setDoc(settingsDoc(), { period: { start: s, end: e } }, { merge: true });
-    renderPeriodDisplay({ start: s, end: e });
-    closePeriodModal();
-    showToast('기간이 저장됐어요');
-  } catch { showToast('저장 중 오류가 발생했어요'); }
-}
-
-// ── MY ISSUES (private) ──
-function subscribeMyIssues() {
-  if (unsubMy) unsubMy();
-  const q = query(issuesCol(), where('author', '==', currentMember), orderBy('date'));
-  unsubMy = onSnapshot(q, snap => {
-    myIssuesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderMyTimeline(myIssuesCache);
-  }, err => { console.error(err); showToast('오류가 발생했어요'); });
-}
-
-// ── FILTER ──
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.className = 'filter-btn';
-    if (btn.dataset.filter === f) btn.classList.add(`active-${f === 'all' ? 'all' : f}`);
-  });
+function setFilter(f){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>{ b.className='filter-btn'; if(b.dataset.filter===f) b.classList.add(`active-${f==='all'?'all':f}`); });
   renderMyTimeline(myIssuesCache);
 }
-
-// ── MY TIMELINE RENDER ──
-function renderMyTimeline(all) {
-  const issues = currentFilter === 'all' ? all : all.filter(i => i.type === currentFilter);
-  const container = document.getElementById('timeline-container');
-
-  if (issues.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <div class="empty-title">${currentFilter === 'all' ? '아직 작성한 이슈가 없어요' : '해당 유형의 이슈가 없어요'}</div>
-        <p class="empty-sub">${currentFilter === 'all' ? '+ 이슈 추가 버튼을 눌러 첫 이슈를 기록해보세요' : '다른 유형으로 필터를 바꿔보세요'}</p>
-        ${currentFilter === 'all' ? `<button class="btn btn-primary" onclick="openIssueModal()">+ 첫 이슈 추가하기</button>` : ''}
-      </div>`;
-    return;
-  }
-
-  container.innerHTML = buildTimelineHTML(issues, false);
+function renderMyTimeline(all){
+  const issues=currentFilter==='all'?all:all.filter(i=>i.type===currentFilter);
+  const c=document.getElementById('timeline-container');
+  if(!issues.length){ c.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">${currentFilter==='all'?'아직 작성한 이슈가 없어요':'해당 유형의 이슈가 없어요'}</div><p class="empty-sub">${currentFilter==='all'?'+ 이슈 추가 버튼을 눌러보세요':''}</p>${currentFilter==='all'?`<button class="btn btn-primary" onclick="openIssueModal()">+ 첫 이슈 추가하기</button>`:''}</div>`; return; }
+  c.innerHTML=buildTimelineHTML(issues,false);
 }
 
-function buildTimelineHTML(issues, isPresent) {
-  const byDate = {};
-  issues.forEach(i => { (byDate[i.date] = byDate[i.date] || []).push(i); });
-
-  return Object.entries(byDate)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, items]) => {
-      const d = new Date(date + 'T00:00:00');
-      const dotColor = items.length === 1 ? COLORS[items[0].type] : '#6b6860';
-
-      if (isPresent) {
-        return `<div class="ptl-group">
-          <div class="ptl-row">
-            <div class="ptl-date">
-              <span class="day">${d.getDate()}</span>
-              <span class="month">${d.getMonth()+1}월</span>
-            </div>
-            <div class="ptl-node"><div class="ptl-node-dot" style="background:${dotColor}"></div></div>
-            <div class="ptl-cards">${items.map(renderPresentCard).join('')}</div>
-          </div>
-        </div>`;
-      }
-
-      return `<div class="tl-group">
-        <div class="tl-date-row">
-          <div class="tl-date">
-            <span class="day">${d.getDate()}</span>
-            <span class="month">${d.getMonth()+1}월</span>
-          </div>
-          <div class="tl-node"><div class="tl-node-dot" style="background:${dotColor}"></div></div>
-          <div class="tl-cards">${items.map(renderCard).join('')}</div>
-        </div>
-      </div>`;
-    }).join('');
+function buildTimelineHTML(issues, isPresent){
+  const byDate={};
+  issues.forEach(i=>{ (byDate[i.date]=byDate[i.date]||[]).push(i); });
+  return Object.entries(byDate).sort(([a],[b])=>a.localeCompare(b)).map(([date,items])=>{
+    const d=new Date(date+'T00:00:00'), dotColor=items.length===1?COLORS[items[0].type]:'#6b6860';
+    if(isPresent) return `<div class="ptl-group"><div class="ptl-row"><div class="ptl-date"><span class="day">${d.getDate()}</span><span class="month">${d.getMonth()+1}월</span></div><div class="ptl-node"><div class="ptl-node-dot" style="background:${dotColor}"></div></div><div class="ptl-cards">${items.map(renderPresentCard).join('')}</div></div></div>`;
+    return `<div class="tl-group"><div class="tl-date-row"><div class="tl-date"><span class="day">${d.getDate()}</span><span class="month">${d.getMonth()+1}월</span></div><div class="tl-node"><div class="tl-node-dot" style="background:${dotColor}"></div></div><div class="tl-cards">${items.map(renderCard).join('')}</div></div></div>`;
+  }).join('');
 }
 
-function renderCard(issue) {
-  const time = issue.createdAt ? formatTime(issue.createdAt) : '';
-  return `<div class="issue-card ${issue.type}" id="card-${issue.id}">
-    <div class="card-main" onclick="toggleMemo('${issue.id}')">
-      <span class="card-type-chip">${TYPE_LABELS[issue.type]}</span>
-      <div class="card-body">
-        <div class="card-title">${esc(issue.title)}</div>
-        ${time ? `<div class="card-meta">${time}</div>` : ''}
-      </div>
-      <div class="card-actions" onclick="event.stopPropagation()">
-        <button class="icon-btn" onclick="openEditModal('${issue.id}')" title="수정">✎</button>
-        <button class="icon-btn del" onclick="openDeleteConfirm('${issue.id}')" title="삭제">✕</button>
-      </div>
-    </div>
-    ${issue.memo ? `<div class="card-memo" id="memo-${issue.id}">${esc(issue.memo).replace(/\n/g,'<br>')}</div>` : ''}
-  </div>`;
+function renderCard(i){
+  return `<div class="issue-card ${i.type}" id="card-${i.id}"><div class="card-main" onclick="toggleMemo('${i.id}')"><span class="card-type-chip">${TYPE_LABELS[i.type]}</span><div class="card-body"><div class="card-title">${esc(i.title)}</div>${i.createdAt?`<div class="card-meta">${formatTime(i.createdAt)}</div>`:''}</div><div class="card-actions" onclick="event.stopPropagation()"><button class="icon-btn" onclick="openEditModal('${i.id}')">✎</button><button class="icon-btn del" onclick="openDeleteConfirm('${i.id}')">✕</button></div></div>${i.memo?`<div class="card-memo" id="memo-${i.id}">${esc(i.memo).replace(/\n/g,'<br>')}</div>`:''}</div>`;
 }
-
-function renderPresentCard(issue) {
-  const authorBadge = issue.author ? `<span class="pcard-author">${esc(issue.author)}</span>` : '';
-  const time = issue.createdAt ? formatTime(issue.createdAt) : '';
-  return `<div class="pcard ${issue.type}" onclick="togglePMemo('${issue.id}')">
-    <div class="pcard-main">
-      <span class="pcard-chip">${TYPE_LABELS[issue.type]}</span>
-      <div class="pcard-body">
-        <div class="pcard-title">${esc(issue.title)}</div>
-        <div class="pcard-meta">${time}${authorBadge}</div>
-      </div>
-    </div>
-    ${issue.memo ? `<div class="pcard-memo" id="pmemo-${issue.id}">${esc(issue.memo).replace(/\n/g,'<br>')}</div>` : ''}
-  </div>`;
+function renderPresentCard(i){
+  return `<div class="pcard ${i.type}" onclick="togglePMemo('${i.id}')"><div class="pcard-main"><span class="pcard-chip">${TYPE_LABELS[i.type]}</span><div class="pcard-body"><div class="pcard-title">${esc(i.title)}</div><div class="pcard-meta">${i.createdAt?formatTime(i.createdAt):''}${i.author?` · ${esc(i.author)}`:''}</div></div></div>${i.memo?`<div class="pcard-memo" id="pmemo-${i.id}">${esc(i.memo).replace(/\n/g,'<br>')}</div>`:''}</div>`;
 }
-
-function toggleMemo(id)  { document.getElementById('memo-'  + id)?.classList.toggle('open'); }
-function togglePMemo(id) { document.getElementById('pmemo-' + id)?.classList.toggle('open'); }
+function toggleMemo(id){ document.getElementById('memo-'+id)?.classList.toggle('open'); }
+function togglePMemo(id){ document.getElementById('pmemo-'+id)?.classList.toggle('open'); }
 
 // ── ISSUE FORM ──
-function openIssueModal(id) {
-  editingId = id || null;
-  selectedType = null;
-  ['decision','action','risk'].forEach(t => { document.getElementById('opt-'+t).className = 'type-opt'; });
-
-  if (id) {
-    const issue = myIssuesCache.find(i => i.id === id);
-    if (!issue) return;
-    document.getElementById('form-modal-title').textContent = '이슈 수정';
-    document.getElementById('f-date').value  = issue.date;
-    document.getElementById('f-title').value = issue.title;
-    document.getElementById('f-memo').value  = issue.memo || '';
-    selectType(issue.type);
+function openIssueModal(id){
+  editingId=id||null; selectedType=null;
+  ['decision','action','risk'].forEach(t=>{ document.getElementById('opt-'+t).className='type-opt'; });
+  if(id){
+    const i=myIssuesCache.find(x=>x.id===id); if(!i) return;
+    document.getElementById('form-modal-title').textContent='이슈 수정';
+    document.getElementById('f-date').value=i.date; document.getElementById('f-title').value=i.title; document.getElementById('f-memo').value=i.memo||'';
+    selectType(i.type);
   } else {
-    document.getElementById('form-modal-title').textContent = '이슈 추가';
-    ['f-date','f-title','f-memo'].forEach(id => { document.getElementById(id).value = ''; });
-    const p = window._period;
-    if (p) { document.getElementById('f-date').min = p.start; document.getElementById('f-date').max = p.end; }
-    else   { ['min','max'].forEach(a => document.getElementById('f-date').removeAttribute(a)); }
+    document.getElementById('form-modal-title').textContent='이슈 추가';
+    ['f-date','f-title','f-memo'].forEach(id=>{ document.getElementById(id).value=''; });
+    const p=window._period;
+    if(p){ document.getElementById('f-date').min=p.start; document.getElementById('f-date').max=p.end; }
+    else { ['min','max'].forEach(a=>document.getElementById('f-date').removeAttribute(a)); }
   }
   document.getElementById('overlay-issue').classList.add('open');
-  setTimeout(() => document.getElementById('f-date').focus(), 100);
 }
+function openEditModal(id){ openIssueModal(id); }
+function closeIssueModal(){ document.getElementById('overlay-issue').classList.remove('open'); }
+function selectType(type){ selectedType=type; ['decision','action','risk'].forEach(t=>{ document.getElementById('opt-'+t).className='type-opt'+(t===type?' sel-'+t:''); }); }
 
-function openEditModal(id) { openIssueModal(id); }
-function closeIssueModal() { document.getElementById('overlay-issue').classList.remove('open'); }
-
-function selectType(type) {
-  selectedType = type;
-  ['decision','action','risk'].forEach(t => {
-    document.getElementById('opt-'+t).className = 'type-opt' + (t === type ? ' sel-'+t : '');
-  });
-}
-
-async function saveIssue() {
-  const date  = document.getElementById('f-date').value.trim();
-  const title = document.getElementById('f-title').value.trim();
-  const memo  = document.getElementById('f-memo').value.trim();
-  if (!date)         { showToast('날짜를 선택해주세요'); return; }
-  if (!selectedType) { showToast('이슈 유형을 선택해주세요'); return; }
-  if (!title)        { showToast('이슈 제목을 입력해주세요'); return; }
-  const p = window._period;
-  if (p && (date < p.start || date > p.end)) { showToast('프로젝트 기간 내 날짜를 선택해주세요'); return; }
-
-  const btn = document.getElementById('btn-save-issue');
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> 저장 중...';
+async function saveIssue(){
+  const date=document.getElementById('f-date').value.trim(), title=document.getElementById('f-title').value.trim(), memo=document.getElementById('f-memo').value.trim();
+  if(!date){ showToast('날짜를 선택해주세요'); return; }
+  if(!selectedType){ showToast('이슈 유형을 선택해주세요'); return; }
+  if(!title){ showToast('이슈 제목을 입력해주세요'); return; }
+  const p=window._period;
+  if(p&&(date<p.start||date>p.end)){ showToast('프로젝트 기간 내 날짜를 선택해주세요'); return; }
+  const btn=document.getElementById('btn-save-issue'); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
   try {
-    if (editingId) {
-      await updateDoc(doc(db, 'teams', currentTeam, 'issues', editingId),
-        { date, type: selectedType, title, memo, updatedAt: new Date().toISOString() });
-      showToast('이슈가 수정됐어요');
-    } else {
-      await addDoc(issuesCol(), { date, type: selectedType, title, memo, author: currentMember, createdAt: new Date().toISOString() });
-      showToast('이슈가 추가됐어요');
-    }
+    if(editingId){ await updateDoc(doc(db,'teams',currentTeam,'issues',editingId),{date,type:selectedType,title,memo,updatedAt:new Date().toISOString()}); showToast('이슈가 수정됐어요'); }
+    else { await addDoc(issuesCol(),{date,type:selectedType,title,memo,author:currentMember,createdAt:new Date().toISOString()}); showToast('이슈가 추가됐어요'); }
     closeIssueModal();
-  } catch (e) { console.error(e); showToast('저장 중 오류가 발생했어요'); }
-  finally { btn.disabled = false; btn.textContent = '저장'; }
+  } catch(e){ console.error(e); showToast('저장 중 오류가 발생했어요'); }
+  finally { btn.disabled=false; btn.textContent='저장'; }
 }
 
-// ── DELETE ──
-function openDeleteConfirm(id) { deletingId = id; document.getElementById('overlay-confirm').classList.add('open'); }
-function closeConfirm() { deletingId = null; document.getElementById('overlay-confirm').classList.remove('open'); }
-async function confirmDelete() {
-  if (!deletingId) return;
-  try {
-    await deleteDoc(doc(db, 'teams', currentTeam, 'issues', deletingId));
-    showToast('이슈가 삭제됐어요');
-  } catch { showToast('삭제 중 오류가 발생했어요'); }
+function openDeleteConfirm(id){ deletingId=id; document.getElementById('overlay-confirm').classList.add('open'); }
+function closeConfirm(){ deletingId=null; document.getElementById('overlay-confirm').classList.remove('open'); }
+async function confirmDelete(){
+  if(!deletingId) return;
+  try { await deleteDoc(doc(db,'teams',currentTeam,'issues',deletingId)); showToast('삭제됐어요'); }
+  catch { showToast('삭제 중 오류가 발생했어요'); }
   closeConfirm();
 }
 
-// ── PRESENT AUTH ──
-function openPresentAuth() {
-  document.getElementById('auth-pw').value = '';
-  document.getElementById('overlay-auth').classList.add('open');
-  setTimeout(() => document.getElementById('auth-pw').focus(), 100);
-}
-function closeAuth() { document.getElementById('overlay-auth').classList.remove('open'); }
-
-async function submitAuth() {
-  const pw = document.getElementById('auth-pw').value;
+// ── Q&A SCREEN ──
+async function loadQAScreen(){
+  if(unsubQA) unsubQA();
+  const list=document.getElementById('qa-list');
+  list.innerHTML='<div class="skeleton-wrap"><div class="skeleton-card" style="height:120px"></div><div class="skeleton-card" style="height:120px"></div></div>';
   try {
-    const snap = await getDoc(doc(db, 'config', 'facilitator'));
-    const saved = snap.exists() ? snap.data().password : '1234';
-    if (pw === saved) {
-      closeAuth();
-      enterPresent();
-    } else {
-      showToast('비밀번호가 틀렸어요');
-      document.getElementById('auth-pw').value = '';
-      document.getElementById('auth-pw').focus();
+    const qsnap=await getDocs(query(questionsCol(),orderBy('order')));
+    const questions=qsnap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!questions.length){
+      list.innerHTML='<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">등록된 질문이 없어요</div><p class="empty-sub">발표 모드 → 질문 관리에서 질문을 추가해주세요</p></div>'; return;
     }
-  } catch {
-    if (pw === '1234') { closeAuth(); enterPresent(); }
-    else { showToast('비밀번호가 틀렸어요'); }
-  }
+    // render questions with answer forms
+    list.innerHTML=questions.map((q,i)=>`
+      <div class="qa-card" id="qcard-${q.id}">
+        <div class="qa-card-header">
+          <div class="qa-card-num">Q${i+1}</div>
+          <div class="qa-card-question">${esc(q.text)}</div>
+          ${q.hint?`<div class="qa-card-point">${esc(q.hint)}</div>`:''}
+        </div>
+        <div class="qa-card-body">
+          <div class="qa-input-row">
+            <textarea class="qa-textarea" id="qa-input-${q.id}" placeholder="익명으로 저장돼요. 솔직하게 적어보세요 :)" rows="3"></textarea>
+            <button class="btn btn-primary" onclick="submitQAAnswer('${q.id}')" id="qa-btn-${q.id}" style="align-self:flex-end;flex-shrink:0">제출</button>
+          </div>
+          <div class="qa-count" id="qa-count-${q.id}"></div>
+          <div class="qa-submitted" id="qa-submitted-${q.id}" style="display:none"><div class="qa-submitted-dot"></div>답변이 제출됐어요</div>
+        </div>
+      </div>`).join('');
+
+    // subscribe answer counts
+    questions.forEach(q=>{
+      onSnapshot(answersCol(q.id),snap=>{
+        const el=document.getElementById('qa-count-'+q.id);
+        if(el) el.textContent=snap.size?`${snap.size}명이 답변했어요`:'';
+      });
+    });
+  } catch(e){ console.error(e); list.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-tertiary)">오류가 발생했어요</div>'; }
+}
+
+async function submitQAAnswer(qid){
+  const input=document.getElementById('qa-input-'+qid), text=input.value.trim();
+  if(!text){ showToast('답변을 입력해주세요'); return; }
+  const btn=document.getElementById('qa-btn-'+qid); btn.disabled=true; btn.innerHTML='<span class="spinner"></span>';
+  try {
+    await addDoc(answersCol(qid),{text,createdAt:new Date().toISOString()});
+    input.value=''; input.disabled=true; btn.style.display='none';
+    const sub=document.getElementById('qa-submitted-'+qid); if(sub) sub.style.display='flex';
+    showToast('답변이 제출됐어요 ✓');
+  } catch(e){ console.error(e); showToast('제출 중 오류가 발생했어요'); btn.disabled=false; btn.textContent='제출'; }
+}
+
+// ── PRESENT AUTH ──
+function openPresentAuth(){ document.getElementById('auth-pw').value=''; document.getElementById('overlay-auth').classList.add('open'); setTimeout(()=>document.getElementById('auth-pw').focus(),100); }
+function closeAuth(){ document.getElementById('overlay-auth').classList.remove('open'); }
+async function submitAuth(){
+  const pw=document.getElementById('auth-pw').value;
+  try {
+    const s=await getDoc(doc(db,'config','facilitator'));
+    const saved=s.exists()?s.data().password:'1234';
+    if(pw===saved){ closeAuth(); enterPresent(); }
+    else { showToast('비밀번호가 틀렸어요'); document.getElementById('auth-pw').value=''; document.getElementById('auth-pw').focus(); }
+  } catch { if(pw==='1234'){ closeAuth(); enterPresent(); } else { showToast('비밀번호가 틀렸어요'); } }
 }
 
 // ── PRESENT MODE ──
-function enterPresent() {
-  document.getElementById('present-team-label').textContent = TEAM_LABELS[currentTeam];
+function enterPresent(){
+  document.getElementById('present-team-label').textContent=TEAM_LABELS[currentTeam];
   showScreen('present');
-  subscribeAllIssues();
   loadPeriod();
+  subscribeAllIssues();
+  loadPresentQA();
+}
+function exitPresent(){
+  if(unsubAll){ unsubAll(); unsubAll=null; }
+  if(unsubPQA){ unsubPQA(); unsubPQA=null; }
+  showScreen('mode');
+}
+function switchPresentTab(tab, btn){
+  document.querySelectorAll('.present-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.present-tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ptab-'+tab).classList.add('active');
 }
 
-function exitPresent() {
-  if (unsubAll) { unsubAll(); unsubAll = null; }
-  showScreen('member');
+function subscribeAllIssues(){
+  if(unsubAll) unsubAll();
+  const q=query(issuesCol(),orderBy('date'));
+  unsubAll=onSnapshot(q,snap=>{ allIssuesCache=snap.docs.map(d=>({id:d.id,...d.data()})); renderPresentTimeline(allIssuesCache); renderStats(allIssuesCache); },err=>console.error(err));
 }
-
-function subscribeAllIssues() {
-  if (unsubAll) unsubAll();
-  const q = query(issuesCol(), orderBy('date'));
-  unsubAll = onSnapshot(q, snap => {
-    allIssuesCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderPresentTimeline(allIssuesCache);
-    renderStats(allIssuesCache);
-  }, err => { console.error(err); });
+function renderStats(issues){
+  const tot=issues.length, dec=issues.filter(i=>i.type==='decision').length, act=issues.filter(i=>i.type==='action').length, ris=issues.filter(i=>i.type==='risk').length, mem=[...new Set(issues.map(i=>i.author).filter(Boolean))].length;
+  document.getElementById('present-stats').innerHTML=`<div class="stat-card"><div class="stat-num">${tot}</div><div class="stat-label">전체 이슈</div></div><div class="stat-card"><div class="stat-num" style="color:var(--decision-dot)">${dec}</div><div class="stat-label">의사결정</div></div><div class="stat-card"><div class="stat-num" style="color:var(--action-dot)">${act}</div><div class="stat-label">실행/작업</div></div><div class="stat-card"><div class="stat-num" style="color:var(--risk-dot)">${ris}</div><div class="stat-label">문제/리스크</div></div><div class="stat-card"><div class="stat-num">${mem}</div><div class="stat-label">참여 멤버</div></div>`;
 }
-
-function renderStats(issues) {
-  const total    = issues.length;
-  const decision = issues.filter(i => i.type === 'decision').length;
-  const action   = issues.filter(i => i.type === 'action').length;
-  const risk     = issues.filter(i => i.type === 'risk').length;
-  const members  = [...new Set(issues.map(i => i.author).filter(Boolean))].length;
-  document.getElementById('present-stats').innerHTML = `
-    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">전체 이슈</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--decision-dot)">${decision}</div><div class="stat-label">주요 의사결정</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--action-dot)">${action}</div><div class="stat-label">실행 / 작업</div></div>
-    <div class="stat-card"><div class="stat-num" style="color:var(--risk-dot)">${risk}</div><div class="stat-label">문제 / 리스크</div></div>
-    <div class="stat-card"><div class="stat-num">${members}</div><div class="stat-label">참여 멤버</div></div>`;
-}
-
-function setPresentFilter(f) {
-  presentFilter = f;
-  document.querySelectorAll('.pfbtn').forEach(btn => {
-    const t = btn.dataset.pf;
-    btn.className = 'pfbtn' + (t === f ? ` pf-${f}` : '');
-  });
+function setPresentFilter(f){
+  presentFilter=f;
+  document.querySelectorAll('.pfbtn').forEach(b=>{ b.className='pfbtn'+(b.dataset.pf===f?` pf-${f}`:''); });
   renderPresentTimeline(allIssuesCache);
 }
-
-function renderPresentTimeline(all) {
-  const issues = presentFilter === 'all' ? all : all.filter(i => i.type === presentFilter);
-  const container = document.getElementById('present-timeline');
-  if (issues.length === 0) {
-    container.innerHTML = `<div style="text-align:center;padding:60px 20px;color:#4a4845;font-size:14px">아직 기록된 이슈가 없어요</div>`;
-    return;
-  }
-  container.innerHTML = buildTimelineHTML(issues, true);
+function renderPresentTimeline(all){
+  const issues=presentFilter==='all'?all:all.filter(i=>i.type===presentFilter);
+  const c=document.getElementById('present-timeline');
+  if(!issues.length){ c.innerHTML='<div style="text-align:center;padding:60px;color:#4a4845;font-size:14px">아직 기록된 이슈가 없어요</div>'; return; }
+  c.innerHTML=buildTimelineHTML(issues,true);
 }
 
-// ── MEMBER MANAGEMENT ──
-async function openMemberManage() {
-  document.getElementById('overlay-members').classList.add('open');
-  await refreshMemberList();
-}
-function closeMemberManage() {
-  document.getElementById('overlay-members').classList.remove('open');
-  loadMembers(currentTeam);
-  init();
-}
-
-async function refreshMemberList() {
-  const list = document.getElementById('member-manage-list');
-  list.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px">로딩 중...</div>';
-  const snap = await getDocs(membersCol());
-  const members = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-    .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-  if (members.length === 0) {
-    list.innerHTML = '<div style="font-size:12px;color:var(--text-tertiary);padding:8px">등록된 멤버가 없어요</div>';
-    return;
-  }
-  list.innerHTML = members.map(m => `
-    <div class="member-manage-item">
-      <div>
-        <span class="member-manage-name">${esc(m.name)}</span>
-        <span class="member-manage-team">${TEAM_LABELS[m.team] || m.team}</span>
-      </div>
-      <button class="icon-btn del" onclick="deleteMember('${m.id}')" title="삭제">✕</button>
-    </div>`).join('');
-}
-
-async function addMember() {
-  const name = document.getElementById('new-member-name').value.trim();
-  const team = document.getElementById('new-member-team').value;
-  if (!name) { showToast('이름을 입력해주세요'); return; }
+async function loadPresentQA(){
+  const list=document.getElementById('present-qa-list');
+  list.innerHTML='<div style="color:#4a4845;text-align:center;padding:40px">로딩 중...</div>';
   try {
-    await addDoc(membersCol(), { name, team });
-    document.getElementById('new-member-name').value = '';
-    await refreshMemberList();
-    showToast(`${name} 추가됐어요`);
-  } catch { showToast('추가 중 오류가 발생했어요'); }
+    const qsnap=await getDocs(query(questionsCol(),orderBy('order')));
+    const questions=qsnap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!questions.length){ list.innerHTML='<div style="color:#4a4845;text-align:center;padding:40px">등록된 질문이 없어요</div>'; return; }
+
+    // Initial render
+    const renderAll=async()=>{
+      const items=await Promise.all(questions.map(async(q,i)=>{
+        const asnap=await getDocs(answersCol(q.id));
+        const answers=asnap.docs.map(d=>d.data());
+        return {q,i,answers};
+      }));
+      list.innerHTML=items.map(({q,i,answers})=>`
+        <div class="pqa-card">
+          <div class="pqa-header">
+            <div class="pqa-num">Q${i+1} <span class="pqa-count-badge">${answers.length}개 답변</span></div>
+            <div class="pqa-question">${esc(q.text)}</div>
+            ${q.hint?`<div class="pqa-point">${esc(q.hint)}</div>`:''}
+          </div>
+          <div class="pqa-answers">
+            ${answers.length?answers.map((a,n)=>`<div class="pqa-answer-item"><div class="pqa-answer-num">#${n+1}</div>${esc(a.text).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="pqa-empty">아직 답변이 없어요</div>'}
+          </div>
+        </div>`).join('');
+    };
+    await renderAll();
+
+    // Live update on new answers
+    questions.forEach(q=>{
+      onSnapshot(answersCol(q.id),()=>renderAll());
+    });
+  } catch(e){ console.error(e); list.innerHTML='<div style="color:#4a4845;text-align:center;padding:40px">오류가 발생했어요</div>'; }
 }
 
-async function deleteMember(id) {
-  if (!confirm('이 멤버를 삭제할까요?')) return;
+// ── MEMBER MANAGE ──
+async function openMemberManage(){ document.getElementById('overlay-members').classList.add('open'); await refreshMemberList(); }
+function closeMemberManage(){ document.getElementById('overlay-members').classList.remove('open'); loadMembers(); }
+async function refreshMemberList(){
+  const list=document.getElementById('member-manage-list');
+  list.innerHTML='<div style="font-size:12px;color:var(--text-tertiary);padding:8px">로딩 중...</div>';
+  const snap=await getDocs(membersCol());
+  const members=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>a.name.localeCompare(b.name,'ko'));
+  if(!members.length){ list.innerHTML='<div style="font-size:12px;color:var(--text-tertiary);padding:8px">등록된 멤버가 없어요</div>'; return; }
+  list.innerHTML=members.map(m=>`<div class="member-manage-item"><div><span style="font-weight:500">${esc(m.name)}</span><span class="member-manage-team">${TEAM_LABELS[m.team]||m.team}</span></div><button class="icon-btn del" onclick="deleteMember('${m.id}')">✕</button></div>`).join('');
+}
+async function addMember(){
+  const name=document.getElementById('new-member-name').value.trim(), team=document.getElementById('new-member-team').value;
+  if(!name){ showToast('이름을 입력해주세요'); return; }
+  try { await addDoc(membersCol(),{name,team}); document.getElementById('new-member-name').value=''; await refreshMemberList(); showToast(`${name} 추가됐어요`); }
+  catch { showToast('추가 중 오류가 발생했어요'); }
+}
+async function deleteMember(id){
+  if(!confirm('이 멤버를 삭제할까요?')) return;
+  try { await deleteDoc(doc(db,'members',id)); await refreshMemberList(); showToast('멤버가 삭제됐어요'); }
+  catch { showToast('삭제 중 오류가 발생했어요'); }
+}
+async function changePw(){
+  const pw=document.getElementById('new-pw').value.trim();
+  if(!pw){ showToast('새 비밀번호를 입력해주세요'); return; }
+  try { await setDoc(doc(db,'config','facilitator'),{password:pw}); document.getElementById('new-pw').value=''; showToast('비밀번호가 변경됐어요'); }
+  catch { showToast('변경 중 오류가 발생했어요'); }
+}
+
+// ── QUESTION MANAGE ──
+async function openQManage(){ document.getElementById('overlay-qmanage').classList.add('open'); await refreshQList(); }
+function closeQManage(){ document.getElementById('overlay-qmanage').classList.remove('open'); if(currentMode==='qa') loadQAScreen(); loadPresentQA(); }
+async function refreshQList(){
+  const list=document.getElementById('q-manage-list');
+  list.innerHTML='<div style="font-size:12px;color:var(--text-tertiary);padding:8px">로딩 중...</div>';
   try {
-    await deleteDoc(doc(db, 'members', id));
-    await refreshMemberList();
-    showToast('멤버가 삭제됐어요');
-  } catch { showToast('삭제 중 오류가 발생했어요'); }
+    const snap=await getDocs(query(questionsCol(),orderBy('order')));
+    const questions=snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!questions.length){ list.innerHTML='<div style="font-size:12px;color:var(--text-tertiary);padding:8px">등록된 질문이 없어요. 아래에서 추가해주세요.</div>'; return; }
+    list.innerHTML=questions.map((q,i)=>`
+      <div class="q-manage-item">
+        <div class="q-manage-body">
+          <div class="q-manage-q">Q${i+1}. ${esc(q.text)}</div>
+          ${q.hint?`<div class="q-manage-hint">${esc(q.hint)}</div>`:''}
+        </div>
+        <button class="icon-btn del" onclick="deleteQuestion('${q.id}')" style="flex-shrink:0">✕</button>
+      </div>`).join('');
+  } catch(e){ console.error(e); list.innerHTML='<div style="font-size:12px;color:var(--text-tertiary);padding:8px">오류가 발생했어요</div>'; }
 }
-
-async function changePw() {
-  const pw = document.getElementById('new-pw').value.trim();
-  if (!pw) { showToast('새 비밀번호를 입력해주세요'); return; }
+async function addQuestion(){
+  const text=document.getElementById('new-q-text').value.trim(), hint=document.getElementById('new-q-hint').value.trim();
+  if(!text){ showToast('질문 내용을 입력해주세요'); return; }
   try {
-    await setDoc(doc(db, 'config', 'facilitator'), { password: pw });
-    document.getElementById('new-pw').value = '';
-    showToast('비밀번호가 변경됐어요');
-  } catch { showToast('변경 중 오류가 발생했어요'); }
+    const snap=await getDocs(questionsCol());
+    await addDoc(questionsCol(),{text,hint,order:snap.size,createdAt:new Date().toISOString()});
+    document.getElementById('new-q-text').value=''; document.getElementById('new-q-hint').value='';
+    await refreshQList(); showToast('질문이 추가됐어요');
+  } catch(e){ console.error(e); showToast('추가 중 오류가 발생했어요'); }
+}
+async function deleteQuestion(id){
+  if(!confirm('이 질문을 삭제할까요? 기존 답변도 모두 삭제돼요.')) return;
+  try {
+    const asnap=await getDocs(answersCol(id));
+    await Promise.all(asnap.docs.map(d=>deleteDoc(d.ref)));
+    await deleteDoc(doc(db,'teams',currentTeam,'questions',id));
+    await refreshQList(); showToast('질문이 삭제됐어요');
+  } catch(e){ console.error(e); showToast('삭제 중 오류가 발생했어요'); }
 }
 
-// ── HELPERS ──
-function formatTime(ts) {
-  const d = new Date(ts);
-  return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-let _tt;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(_tt); _tt = setTimeout(() => t.classList.remove('show'), 2400);
-}
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    [closeIssueModal, closePeriodModal, closeConfirm, closeAuth, closeMemberManage]
-      .forEach(fn => fn());
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    [closeIssueModal,closePeriodModal,closeConfirm,closeAuth,closeMemberManage,closeQManage].forEach(fn=>fn());
   }
 });
 </script>
