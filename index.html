@@ -184,6 +184,32 @@
   .q-manage-hint{font-size:11px;color:var(--text-tertiary);}
   .q-add-form{display:flex;flex-direction:column;gap:8px;margin-top:10px;padding-top:12px;border-top:1px solid var(--border);}
 
+  /* TIMELINE GUIDE */
+  .tl-guide{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;}
+  .tl-guide-header{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-primary);user-select:none;}
+  .tl-guide-header:hover{background:var(--bg);}
+  .tl-guide-arrow{font-size:11px;color:var(--text-tertiary);transition:transform 0.2s;}
+  .tl-guide-arrow.open{transform:rotate(180deg);}
+  .tl-guide-body{padding:0 16px 14px;display:none;}
+  .tl-guide-body.open{display:block;}
+  .tl-guide-intro{font-size:12px;color:var(--text-secondary);line-height:1.65;margin-bottom:12px;}
+  .tl-guide-table{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:10px;}
+  .tl-guide-row{display:grid;grid-template-columns:130px 1fr 1fr;font-size:12px;border-bottom:1px solid var(--border-soft);}
+  .tl-guide-row:last-child{border-bottom:none;}
+  .tl-guide-row>div{padding:9px 12px;color:var(--text-secondary);line-height:1.5;}
+  .tl-guide-thead{background:var(--bg);}
+  .tl-guide-thead>div{font-size:11px;font-weight:600;color:var(--text-tertiary);padding:7px 12px;}
+  .tl-guide-chip{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;}
+  .tl-chip-decision{background:var(--decision-bg);color:var(--decision-text);}
+  .tl-chip-action{background:#e8f0fe;color:#1a56b0;}
+  .tl-chip-risk{background:var(--risk-bg);color:var(--risk-text);}
+  .tl-guide-note{font-size:11px;color:var(--text-tertiary);line-height:1.65;}
+  @media(max-width:600px){
+    .tl-guide-row{grid-template-columns:1fr;}
+    .tl-guide-row>div:not(:first-child){padding-top:0;}
+    .tl-guide-thead{display:none;}
+  }
+
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:12px;font-weight:500;padding:9px 16px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:400;white-space:nowrap;}
   .toast.show{opacity:1;}
   .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;}
@@ -372,6 +398,37 @@
         <span class="period-dates" id="period-display">기간이 설정되지 않았어요</span>
       </div>
       <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="openPeriodModal()">설정</button>
+    </div>
+    <!-- 작성 가이드 -->
+    <div class="tl-guide">
+      <div class="tl-guide-header" onclick="toggleGuide()">
+        <span>📋 작성 전 꼭 읽어주세요</span>
+        <span class="tl-guide-arrow" id="guide-arrow">▼</span>
+      </div>
+      <div class="tl-guide-body" id="guide-body">
+        <p class="tl-guide-intro">타임라인은 아래 3가지 유형으로 나눠서 적습니다.<br><strong>판단이나 평가 없이, 있었던 사실만</strong> 적어주세요. 기억나는 것부터 적어도 괜찮습니다.</p>
+        <div class="tl-guide-table">
+          <div class="tl-guide-row tl-guide-thead">
+            <div>유형</div><div>의미</div><div>이런 것들이에요</div>
+          </div>
+          <div class="tl-guide-row">
+            <div><span class="tl-guide-chip tl-chip-decision">🟡 의사결정</span></div>
+            <div>무언가를 결정하거나 승인한 순간</div>
+            <div>일정 확정, 방향 변경, 작업 중단·재개 결정 등</div>
+          </div>
+          <div class="tl-guide-row">
+            <div><span class="tl-guide-chip tl-chip-action">🔵 실행·작업</span></div>
+            <div>실제로 진행한 작업이나 활동</div>
+            <div>설비 조정, 테스트 진행, 세팅 작업, 회의 등</div>
+          </div>
+          <div class="tl-guide-row">
+            <div><span class="tl-guide-chip tl-chip-risk">🔴 리스크 인지</span></div>
+            <div>문제나 이상 징후를 알아챈 순간</div>
+            <div>설비 이상 발견, 일정 지연 인지, 목표 미달 확인 등</div>
+          </div>
+        </div>
+        <p class="tl-guide-note">※ 하나의 시점에 여러 유형이 겹칠 수 있어요. 그럴 경우 행을 나눠서 각각 적어주세요.<br>※ 정확한 날짜가 기억나지 않으면 최대한 비슷한 날짜로 기입해주세요.</p>
+      </div>
     </div>
     <div class="private-notice">🔒 내가 작성한 이슈만 보여요. 전체 통합본은 현장 발표 모드에서 확인할 수 있어요.</div>
     <div class="filter-bar">
@@ -937,6 +994,13 @@ async function deleteQuestion(id){
     await refreshQList();showToast('질문이 삭제됐어요');
   }catch(e){console.error(e);showToast('삭제 중 오류가 발생했어요');}
 }
+
+window.toggleGuide=function(){
+  const body=document.getElementById('guide-body');
+  const arrow=document.getElementById('guide-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+};
 
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){[closeIssueModal,closePeriodModal,closeConfirm,closeAuth,closeMemberManage,closeQManage].forEach(fn=>fn());}
