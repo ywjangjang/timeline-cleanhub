@@ -210,6 +210,15 @@
     .tl-guide-thead{display:none;}
   }
 
+  /* CATEGORY SECTION HEADERS */
+  .q-category-section{margin-bottom:6px;}
+  .q-category-header{display:flex;align-items:center;gap:8px;padding:6px 0 4px;margin-bottom:4px;}
+  .q-category-label{font-size:11px;font-weight:700;color:var(--text-tertiary);letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;}
+  .q-category-line{flex:1;height:1px;background:var(--border);}
+  .pqa-category-header{display:flex;align-items:center;gap:10px;margin:20px 0 12px;}
+  .pqa-category-label{font-size:12px;font-weight:700;color:var(--text-tertiary);letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;}
+  .pqa-category-line{flex:1;height:1px;background:var(--border);}
+
   /* HOME TABS */
   .home-tab-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;flex-shrink:0;}
   .home-tab{font-family:inherit;font-size:13px;font-weight:500;padding:12px 16px;background:transparent;border:none;color:var(--text-tertiary);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;}
@@ -623,6 +632,7 @@
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;white-space:nowrap;"><input type="radio" name="q-phase" value="live" style="margin:0"> ▶ 진행 질문</label>
           </div>
         </div>
+        <div class="field"><label>카테고리 (선택)</label><input type="text" id="new-q-category" placeholder="예: 감정, 사실, 개선점 — 비우면 기본 카테고리로 저장됩니다"></div>
         <div class="field"><label>질문 내용 *</label><textarea id="new-q-text" placeholder="예: 이번 이슈에서 가장 힘들었던 순간을 한 문장으로 써주세요." style="min-height:56px"></textarea></div>
         <div class="field"><label>포인트 / 힌트 (선택)</label><input type="text" id="new-q-hint" placeholder="예: 상황 묘사 또는 감정 표현 모두 가능."></div>
         <button class="btn btn-primary" onclick="addQuestion()" style="align-self:flex-end">질문 추가</button>
@@ -903,29 +913,48 @@ function renderQACards(questions, listKey, submittable){
     list.innerHTML='<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-title">등록된 질문이 없어요</div><p class="empty-sub">발표 모드 → 질문 관리에서 질문을 추가해주세요</p></div>';
     return;
   }
-  list.innerHTML=questions.map((q,i)=>{
-    const inputId=`qa-input-${listKey}-${q.id}`;
-    const btnId=`qa-btn-${listKey}-${q.id}`;
-    const countId=`qa-count-${listKey}-${q.id}`;
-    const subId=`qa-submitted-${listKey}-${q.id}`;
-    return `<div class="qa-card">
-      <div class="qa-card-header">
-        <div class="qa-card-num">Q${i+1}</div>
-        <div class="qa-card-question">${esc(q.text)}</div>
-        ${q.hint?`<div class="qa-card-point">${esc(q.hint)}</div>`:''}
-      </div>
-      ${submittable?`
-      <div class="qa-card-body">
-        <div class="qa-input-row">
-          <textarea class="qa-textarea" id="${inputId}" placeholder="익명으로 저장돼요. 솔직하게 적어보세요 :)" rows="3"></textarea>
-          <button class="btn btn-primary" onclick="submitQAAnswer('${q.id}','${listKey}')" id="${btnId}" style="align-self:flex-end;flex-shrink:0">제출</button>
+  // 카테고리별 그룹핑
+  const grouped={};
+  questions.forEach(q=>{
+    const cat=q.category||'기본';
+    if(!grouped[cat])grouped[cat]=[];
+    grouped[cat].push(q);
+  });
+  let html='';
+  let globalIdx=0;
+  Object.entries(grouped).forEach(([cat,qs])=>{
+    html+=`<div style="margin-bottom:20px">
+      <div class="q-category-header">
+        <span class="q-category-label">${esc(cat)}</span>
+        <span class="q-category-line"></span>
+      </div>`;
+    qs.forEach(q=>{
+      const i=globalIdx++;
+      const inputId=`qa-input-${listKey}-${q.id}`;
+      const btnId=`qa-btn-${listKey}-${q.id}`;
+      const countId=`qa-count-${listKey}-${q.id}`;
+      const subId=`qa-submitted-${listKey}-${q.id}`;
+      html+=`<div class="qa-card" style="margin-bottom:8px">
+        <div class="qa-card-header">
+          <div class="qa-card-num">Q${i+1}</div>
+          <div class="qa-card-question">${esc(q.text)}</div>
+          ${q.hint?`<div class="qa-card-point">${esc(q.hint)}</div>`:''}
         </div>
-        <div class="qa-count" id="${countId}"></div>
-        <div class="qa-submitted" id="${subId}" style="display:none"><div class="qa-submitted-dot"></div>답변이 제출됐어요</div>
-      </div>`:
-      `<div class="qa-card-body"><p style="font-size:12px;color:var(--text-tertiary)">사전 작성 탭에서 제출 가능해요</p></div>`}
-    </div>`;
-  }).join('');
+        ${submittable?`
+        <div class="qa-card-body">
+          <div class="qa-input-row">
+            <textarea class="qa-textarea" id="${inputId}" placeholder="익명으로 저장돼요. 솔직하게 적어보세요 :)" rows="3"></textarea>
+            <button class="btn btn-primary" onclick="submitQAAnswer('${q.id}','${listKey}')" id="${btnId}" style="align-self:flex-end;flex-shrink:0">제출</button>
+          </div>
+          <div class="qa-count" id="${countId}"></div>
+          <div class="qa-submitted" id="${subId}" style="display:none"><div class="qa-submitted-dot"></div>답변이 제출됐어요</div>
+        </div>`:
+        `<div class="qa-card-body"><p style="font-size:12px;color:var(--text-tertiary)">사전 작성 탭에서 제출 가능해요</p></div>`}
+      </div>`;
+    });
+    html+='</div>';
+  });
+  list.innerHTML=html;
   if(submittable){
     questions.forEach(q=>{
       onSnapshot(answersCol(q.id),snap=>{
@@ -1016,17 +1045,33 @@ async function loadPresentQA(){
         const asnap=await getDocs(answersCol(q.id));
         return{q,i,answers:asnap.docs.map(d=>d.data())};
       }));
-      list.innerHTML=items.map(({q,i,answers})=>`
-        <div class="pqa-card">
-          <div class="pqa-header">
-            <div class="pqa-num">Q${i+1} <span class="pqa-count-badge">${answers.length}개 답변</span></div>
-            <div class="pqa-question">${esc(q.text)}</div>
-            ${q.hint?`<div class="pqa-point">${esc(q.hint)}</div>`:''}
-          </div>
-          <div class="pqa-answers">
-            ${answers.length?answers.map((a,n)=>`<div class="pqa-answer-item"><div class="pqa-answer-num">#${n+1}</div>${esc(a.text).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="pqa-empty">아직 답변이 없어요</div>'}
-          </div>
-        </div>`).join('');
+      // 카테고리별 그룹핑
+      const catGroups={};
+      items.forEach(item=>{
+        const cat=item.q.category||'기본';
+        if(!catGroups[cat])catGroups[cat]=[];
+        catGroups[cat].push(item);
+      });
+      let html='';
+      Object.entries(catGroups).forEach(([cat,catItems])=>{
+        html+=`<div class="pqa-category-header">
+          <span class="pqa-category-label">${esc(cat)}</span>
+          <span class="pqa-category-line"></span>
+        </div>`;
+        catItems.forEach(({q,i,answers})=>{
+          html+=`<div class="pqa-card" style="margin-bottom:16px">
+            <div class="pqa-header">
+              <div class="pqa-num">Q${i+1} <span class="pqa-count-badge">${answers.length}개 답변</span></div>
+              <div class="pqa-question">${esc(q.text)}</div>
+              ${q.hint?`<div class="pqa-point">${esc(q.hint)}</div>`:''}
+            </div>
+            <div class="pqa-answers">
+              ${answers.length?answers.map((a,n)=>`<div class="pqa-answer-item"><div class="pqa-answer-num">#${n+1}</div>${esc(a.text).replace(/\n/g,'<br>')}</div>`).join(''):'<div class="pqa-empty">아직 답변이 없어요</div>'}
+            </div>
+          </div>`;
+        });
+      });
+      list.innerHTML=html;
     };
     await renderAll();
     questions.forEach(q=>{onSnapshot(answersCol(q.id),()=>renderAll());});
@@ -1079,15 +1124,32 @@ async function refreshQList(){
     const snap=await getDocs(q2);
     const questions=snap.docs.map(d=>({id:d.id,...d.data()}));
     if(!questions.length){list.innerHTML='<div style="font-size:12px;color:var(--text-tertiary);padding:8px">등록된 질문이 없어요. 아래에서 추가해주세요.</div>';return;}
-    list.innerHTML=questions.map((q,i)=>`
-      <div class="q-manage-item" draggable="true" data-id="${q.id}">
-        <span class="q-drag-handle" title="드래그해서 순서 변경">⠿</span>
-        <div class="q-manage-body">
-          <div class="q-manage-q">${q.phase==='live'?'<span style="font-size:10px;background:#eef6ec;color:#2a6e2a;padding:1px 6px;border-radius:999px;margin-right:5px;font-weight:600">진행</span>':'<span style="font-size:10px;background:#fef9ec;color:#7a5a00;padding:1px 6px;border-radius:999px;margin-right:5px;font-weight:600">사전</span>'}Q${i+1}. ${esc(q.text)}</div>
-          ${q.hint?`<div class="q-manage-hint">${esc(q.hint)}</div>`:''}
+    // 카테고리별 그룹핑
+    const grouped={};
+    questions.forEach((q,i)=>{
+      const cat=q.category||'기본';
+      if(!grouped[cat])grouped[cat]=[];
+      grouped[cat].push({...q,_globalIdx:i});
+    });
+    let html='';
+    Object.entries(grouped).forEach(([cat,qs])=>{
+      html+=`<div class="q-category-section" data-category="${esc(cat)}">
+        <div class="q-category-header">
+          <span class="q-category-label">${esc(cat)}</span>
+          <span class="q-category-line"></span>
         </div>
-        <button class="icon-btn del" onclick="deleteQuestion('${q.id}')" style="flex-shrink:0">✕</button>
-      </div>`).join('');
+        ${qs.map((q,i)=>`
+        <div class="q-manage-item" draggable="true" data-id="${q.id}" data-category="${esc(cat)}">
+          <span class="q-drag-handle" title="드래그해서 순서 변경">⠿</span>
+          <div class="q-manage-body">
+            <div class="q-manage-q">${q.phase==='live'?'<span style="font-size:10px;background:#eef6ec;color:#2a6e2a;padding:1px 6px;border-radius:999px;margin-right:5px;font-weight:600">진행</span>':'<span style="font-size:10px;background:#fef9ec;color:#7a5a00;padding:1px 6px;border-radius:999px;margin-right:5px;font-weight:600">사전</span>'}${esc(q.text)}</div>
+            ${q.hint?`<div class="q-manage-hint">${esc(q.hint)}</div>`:''}
+          </div>
+          <button class="icon-btn del" onclick="deleteQuestion('${q.id}')" style="flex-shrink:0">✕</button>
+        </div>`).join('')}
+      </div>`;
+    });
+    list.innerHTML=html;
     // 드래그 앤 드롭 순서 변경
     list.querySelectorAll('.q-manage-item').forEach(el=>{
       el.addEventListener('dragstart',e=>{
@@ -1137,13 +1199,17 @@ function setQFilter(f){
 }
 
 async function addQuestion(){
-  const text=document.getElementById('new-q-text').value.trim(),hint=document.getElementById('new-q-hint').value.trim();
+  const text=document.getElementById('new-q-text').value.trim();
+  const hint=document.getElementById('new-q-hint').value.trim();
+  const category=document.getElementById('new-q-category').value.trim()||'기본';
   const phase=document.querySelector('input[name="q-phase"]:checked')?.value||'pre';
   if(!text){showToast('질문 내용을 입력해주세요');return;}
   try{
     const snap=await getDocs(query(questionsCol(),where('phase','==',phase)));
-    await addDoc(questionsCol(),{text,hint,phase,order:snap.size,createdAt:new Date().toISOString()});
-    document.getElementById('new-q-text').value='';document.getElementById('new-q-hint').value='';
+    await addDoc(questionsCol(),{text,hint,category,phase,order:snap.size,createdAt:new Date().toISOString()});
+    document.getElementById('new-q-text').value='';
+    document.getElementById('new-q-hint').value='';
+    document.getElementById('new-q-category').value='';
     await refreshQList();showToast('질문이 추가됐어요');
   }catch(e){console.error(e);showToast('추가 중 오류가 발생했어요');}
 }
