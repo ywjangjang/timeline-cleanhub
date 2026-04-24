@@ -1144,9 +1144,9 @@ async function refreshQList(){
           <div class="q-manage-body">
             <div class="q-manage-q">${q.phase==='live'?'<span style="font-size:10px;background:#eef6ec;color:#2a6e2a;padding:1px 6px;border-radius:999px;margin-right:5px;font-weight:600">진행</span>':'<span style="font-size:10px;background:#fef9ec;color:#7a5a00;padding:1px 6px;border-radius:999px;margin-right:5px;font-weight:600">사전</span>'}${esc(q.text)}</div>
             ${q.hint?`<div class="q-manage-hint">${esc(q.hint)}</div>`:''}
-            <div class="q-cat-edit" id="qcat-edit-${q.id}" style="display:none;margin-top:6px;display:none">
+            <div class="q-cat-edit" id="qcat-edit-${q.id}" style="display:none;margin-top:6px;">
               <div style="display:flex;gap:6px;align-items:center;">
-                <input type="text" id="qcat-input-${q.id}" value="${esc(q.category||'기본')}" placeholder="카테고리 이름" style="font-family:inherit;font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text-primary);outline:none;flex:1;">
+                <input type="text" id="qcat-input-${q.id}" value="${esc(q.category||'기본')}" placeholder="카테고리 이름" list="qcat-datalist" style="font-family:inherit;font-size:12px;padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text-primary);outline:none;flex:1;">
                 <button onclick="saveQCategory('${q.id}')" style="font-family:inherit;font-size:11px;font-weight:500;padding:4px 10px;border-radius:var(--radius-sm);border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;">저장</button>
                 <button onclick="toggleQCatEdit('${q.id}')" style="font-family:inherit;font-size:11px;padding:4px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;">취소</button>
               </div>
@@ -1160,6 +1160,11 @@ async function refreshQList(){
       </div>`;
     });
     list.innerHTML=html;
+    // 기존 카테고리 목록을 datalist로 추가
+    const allCats=[...new Set(questions.map(q=>q.category||'기본'))];
+    let dl=document.getElementById('qcat-datalist');
+    if(!dl){dl=document.createElement('datalist');dl.id='qcat-datalist';document.body.appendChild(dl);}
+    dl.innerHTML=allCats.map(c=>`<option value="${esc(c)}">`).join('');
     // 드래그 앤 드롭 순서 변경
     list.querySelectorAll('.q-manage-item').forEach(el=>{
       el.addEventListener('dragstart',e=>{
